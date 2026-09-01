@@ -6,6 +6,7 @@ import styled from 'styled-components';
 
 const NavContainer = styled(motion.div)`
   position: absolute;
+
   top: ${(props) =>
     props.$click ? '0' : `-${props.theme.navHeight}`};
 

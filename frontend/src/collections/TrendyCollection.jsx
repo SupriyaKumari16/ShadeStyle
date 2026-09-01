@@ -1,8 +1,105 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { useSearchParams } from "react-router-dom";
+import {
+  useSearchParams,
+  useNavigate,
+} from "react-router-dom";
 
-import { trendyProducts } from "../data/trendy/data";
+
+/* =========================================================
+   RECOMMENDED COLORS BY SKIN TONE
+========================================================= */
+
+const recommendedColors = {
+  fair: [
+    { name: "Lavender", value: "#B8A5D6" },
+    { name: "Sky Blue", value: "#9DB8D9" },
+    { name: "Ivory", value: "#F5F0E6" },
+    { name: "Peach", value: "#F5B58F" },
+    { name: "Mint Green", value: "#AFC8B8" },
+    { name: "Light Pink", value: "#E8B9C0" },
+    { name: "Beige", value: "#DCC5A7" },
+    { name: "Champagne", value: "#E7CBA9" },
+  ],
+
+  light: [
+    { name: "Rose", value: "#D88C9A" },
+    { name: "Dusty Blue", value: "#91A9C7" },
+    { name: "Ivory", value: "#F5F0E6" },
+    { name: "Peach", value: "#F3AE87" },
+    { name: "Sage", value: "#AABCA6" },
+    { name: "Mauve", value: "#B8899D" },
+    { name: "Camel", value: "#C19A6B" },
+    { name: "Soft Coral", value: "#E88979" },
+  ],
+
+  medium: [
+    { name: "Terracotta", value: "#C56B4A" },
+    { name: "Olive", value: "#7D8060" },
+    { name: "Mustard", value: "#D1A33A" },
+    { name: "Teal", value: "#287C78" },
+    { name: "Cream", value: "#F2E3C4" },
+    { name: "Rust", value: "#A94F32" },
+    { name: "Coral", value: "#D87567" },
+    { name: "Chocolate", value: "#70452F" },
+  ],
+
+  olive: [
+    { name: "Emerald", value: "#287A62" },
+    { name: "Burgundy", value: "#6D2638" },
+    { name: "Cream", value: "#F3E7CF" },
+    { name: "Forest Green", value: "#315A45" },
+    { name: "Rust", value: "#A95135" },
+    { name: "Plum", value: "#704263" },
+    { name: "Camel", value: "#B88A5A" },
+    { name: "Deep Teal", value: "#236B6B" },
+  ],
+
+  tan: [
+    { name: "Rust", value: "#A94F32" },
+    { name: "Camel", value: "#B88A5A" },
+    { name: "Teal", value: "#287C78" },
+    { name: "Olive", value: "#777B4D" },
+    { name: "Mustard", value: "#D2A42D" },
+    { name: "Cream", value: "#F3E4C8" },
+    { name: "Chocolate", value: "#6F402D" },
+    { name: "Coral", value: "#D87567" },
+  ],
+
+  dusky: [
+    { name: "Royal Blue", value: "#3155A5" },
+    { name: "Wine", value: "#722F45" },
+    { name: "Mustard", value: "#D5A52A" },
+    { name: "Emerald", value: "#087A5B" },
+    { name: "Terracotta", value: "#B85C3A" },
+    { name: "Ivory", value: "#F4E9D5" },
+    { name: "Plum", value: "#713B70" },
+    { name: "Teal", value: "#267A78" },
+  ],
+
+  deep: [
+    { name: "Emerald", value: "#087A5B" },
+    { name: "Cobalt Blue", value: "#3158B7" },
+    { name: "Orange", value: "#D96B32" },
+    { name: "Fuchsia", value: "#A92E6A" },
+    { name: "Mustard", value: "#D5A52A" },
+    { name: "Ivory", value: "#F4E9D5" },
+    { name: "Turquoise", value: "#258B91" },
+    { name: "Burgundy", value: "#76283E" },
+  ],
+
+  richdeep: [
+    { name: "Magenta", value: "#A72F68" },
+    { name: "Royal Purple", value: "#61358F" },
+    { name: "Gold", value: "#D5A83A" },
+    { name: "Cobalt", value: "#3158B7" },
+    { name: "Emerald", value: "#087A5B" },
+    { name: "Orange", value: "#D96B32" },
+    { name: "Ivory", value: "#F5E9D2" },
+    { name: "Deep Teal", value: "#176B70" },
+  ],
+};
+
 
 /* =========================================================
    COLORS
@@ -16,6 +113,7 @@ const MUTED_TEAL = "#55716D";
 const BORDER = "rgba(18, 63, 61, 0.12)";
 const ACCENT = "#D99A78";
 
+
 /* =========================================================
    PAGE
 ========================================================= */
@@ -23,7 +121,6 @@ const ACCENT = "#D99A78";
 const Page = styled.main`
   min-height: 100vh;
   width: 100%;
-
   box-sizing: border-box;
 
   background: ${PAGE_BG};
@@ -35,6 +132,7 @@ const Page = styled.main`
     padding: 5rem 1.2rem 3rem;
   }
 `;
+
 
 /* =========================================================
    BREADCRUMB
@@ -48,7 +146,6 @@ const Breadcrumb = styled.div`
   margin-bottom: 2.5rem;
 
   font-size: ${(props) => props.theme.fontsm};
-
   color: ${MUTED_TEAL};
 
   span:last-child {
@@ -60,39 +157,33 @@ const Breadcrumb = styled.div`
   }
 `;
 
+
 /* =========================================================
    HEADER
 ========================================================= */
 
 const Header = styled.div`
   display: flex;
-
   justify-content: space-between;
   align-items: flex-end;
 
   gap: 2rem;
-
   margin-bottom: 3rem;
 
   h1 {
     font-family: "Kaushan Script";
-
     font-size: ${(props) => props.theme.fontxxxl};
-
     font-weight: 400;
-
     line-height: 1;
   }
 
   .description {
     margin-top: 1rem;
-
     max-width: 30rem;
 
     color: ${MUTED_TEAL};
 
     font-size: ${(props) => props.theme.fontmd};
-
     line-height: 1.6;
   }
 
@@ -104,7 +195,6 @@ const Header = styled.div`
 
   @media (max-width: 48em) {
     flex-direction: column;
-
     align-items: flex-start;
 
     h1 {
@@ -113,19 +203,17 @@ const Header = styled.div`
   }
 `;
 
+
 /* =========================================================
    SORT
 ========================================================= */
 
 const SortBox = styled.div`
   display: flex;
-
   align-items: center;
-
   gap: 0.8rem;
 
   white-space: nowrap;
-
   color: ${DARK_TEAL};
 
   select {
@@ -134,7 +222,6 @@ const SortBox = styled.div`
     border: 1px solid ${BORDER};
 
     background: ${IVORY};
-
     color: ${DARK_TEAL};
 
     padding: 0.9rem 2.8rem 0.9rem 1rem;
@@ -144,10 +231,10 @@ const SortBox = styled.div`
     font-family: inherit;
 
     cursor: pointer;
-
     outline: none;
   }
 `;
+
 
 /* =========================================================
    CONTENT
@@ -159,7 +246,6 @@ const Content = styled.div`
   grid-template-columns: 16rem 1fr;
 
   gap: 2rem;
-
   align-items: start;
 
   @media (max-width: 64em) {
@@ -171,6 +257,7 @@ const Content = styled.div`
   }
 `;
 
+
 /* =========================================================
    FILTER SIDEBAR
 ========================================================= */
@@ -179,23 +266,22 @@ const FilterSidebar = styled.aside`
   background: ${IVORY};
 
   border: 1px solid ${BORDER};
-
   border-radius: 1rem;
 
   padding: 1.5rem;
 
   position: sticky;
-
   top: 6rem;
 
-  box-shadow: 0 10px 30px rgba(18, 63, 61, 0.04);
+  box-shadow:
+    0 10px 30px rgba(18, 63, 61, 0.04);
 
   @media (max-width: 48em) {
     position: relative;
-
     top: 0;
   }
 `;
+
 
 const FilterHeader = styled.div`
   display: flex;
@@ -207,13 +293,11 @@ const FilterHeader = styled.div`
 
   h2 {
     font-size: ${(props) => props.theme.fontlg};
-
     font-weight: 600;
   }
 
   button {
     border: none;
-
     background: transparent;
 
     color: ${MUTED_TEAL};
@@ -225,6 +309,7 @@ const FilterHeader = styled.div`
     font-size: ${(props) => props.theme.fontxs};
   }
 `;
+
 
 const FilterGroup = styled.div`
   margin-bottom: 2rem;
@@ -238,17 +323,21 @@ const FilterGroup = styled.div`
   }
 `;
 
+
+/* =========================================================
+   RADIO
+========================================================= */
+
 const RadioList = styled.div`
   display: flex;
-
   flex-direction: column;
 
   gap: 0.75rem;
 `;
 
+
 const RadioLabel = styled.label`
   display: flex;
-
   align-items: center;
 
   gap: 0.7rem;
@@ -290,10 +379,12 @@ const RadioLabel = styled.label`
       top: 50%;
       left: 50%;
 
-      transform: translate(-50%, -50%);
+      transform:
+        translate(-50%, -50%);
     }
   }
 `;
+
 
 /* =========================================================
    SIZE
@@ -301,11 +392,11 @@ const RadioLabel = styled.label`
 
 const SizeList = styled.div`
   display: flex;
-
   flex-wrap: wrap;
 
   gap: 0.5rem;
 `;
+
 
 const SizeButton = styled.button`
   border: 1px solid
@@ -314,15 +405,17 @@ const SizeButton = styled.button`
         ? DARK_TEAL
         : BORDER};
 
-  background: ${(props) =>
-    props.$active
-      ? DARK_TEAL
-      : "transparent"};
+  background:
+    ${(props) =>
+      props.$active
+        ? DARK_TEAL
+        : "transparent"};
 
-  color: ${(props) =>
-    props.$active
-      ? IVORY
-      : DARK_TEAL};
+  color:
+    ${(props) =>
+      props.$active
+        ? IVORY
+        : DARK_TEAL};
 
   border-radius: 0.5rem;
 
@@ -330,7 +423,9 @@ const SizeButton = styled.button`
 
   font-family: inherit;
 
-  font-size: ${(props) => props.theme.fontxs};
+  font-size:
+    ${(props) =>
+      props.theme.fontxs};
 
   cursor: pointer;
 
@@ -340,6 +435,7 @@ const SizeButton = styled.button`
     border-color: ${DARK_TEAL};
   }
 `;
+
 
 /* =========================================================
    PRICE
@@ -371,7 +467,8 @@ const PriceRange = styled.div`
 
     background: ${ACCENT};
 
-    transform: translateY(-50%);
+    transform:
+      translateY(-50%);
   }
 
   .range::before {
@@ -387,11 +484,14 @@ const PriceRange = styled.div`
 
     justify-content: space-between;
 
-    font-size: ${(props) => props.theme.fontxs};
+    font-size:
+      ${(props) =>
+        props.theme.fontxs};
 
     color: ${MUTED_TEAL};
   }
 `;
+
 
 /* =========================================================
    COLORS
@@ -405,6 +505,7 @@ const ColorList = styled.div`
   flex-wrap: wrap;
 `;
 
+
 const ColorDot = styled.button`
   width: 2rem;
   height: 2rem;
@@ -417,7 +518,9 @@ const ColorDot = styled.button`
         ? DARK_TEAL
         : "transparent"};
 
-  background: ${(props) => props.$color};
+  background:
+    ${(props) =>
+      props.$color};
 
   cursor: pointer;
 
@@ -427,6 +530,7 @@ const ColorDot = styled.button`
     transform: scale(1.08);
   }
 `;
+
 
 /* =========================================================
    APPLY BUTTON
@@ -454,11 +558,13 @@ const ApplyButton = styled.button`
     opacity 0.25s ease;
 
   &:hover {
-    transform: translateY(-2px);
+    transform:
+      translateY(-2px);
 
     opacity: 0.9;
   }
 `;
+
 
 /* =========================================================
    PRODUCTS
@@ -468,27 +574,33 @@ const ProductsArea = styled.div`
   min-width: 0;
 `;
 
+
 const ProductGrid = styled.div`
   display: grid;
 
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns:
+    repeat(4, 1fr);
 
   gap: 1.2rem;
 
   @media (max-width: 75em) {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns:
+      repeat(3, 1fr);
   }
 
   @media (max-width: 56em) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, 1fr);
   }
 
   @media (max-width: 30em) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, 1fr);
 
     gap: 0.7rem;
   }
 `;
+
 
 /* =========================================================
    PRODUCT CARD
@@ -503,18 +615,27 @@ const ProductCard = styled.article`
 
   border: 1px solid ${BORDER};
 
+  cursor: pointer;
+
   transition:
     transform 0.35s ease,
     box-shadow 0.35s ease;
 
   &:hover {
-    transform: translateY(-5px);
+    transform:
+      translateY(-5px);
 
     box-shadow:
       0 15px 30px
-        rgba(18, 63, 61, 0.1);
+      rgba(18, 63, 61, 0.1);
+  }
+
+  &:focus-visible {
+    outline: 2px solid ${DARK_TEAL};
+    outline-offset: 3px;
   }
 `;
+
 
 const ProductImage = styled.div`
   position: relative;
@@ -540,9 +661,11 @@ const ProductImage = styled.div`
   }
 
   ${ProductCard}:hover & img {
-    transform: scale(1.04);
+    transform:
+      scale(1.04);
   }
 `;
+
 
 const Wishlist = styled.button`
   position: absolute;
@@ -557,7 +680,8 @@ const Wishlist = styled.button`
 
   border: none;
 
-  background: rgba(248, 245, 236, 0.95);
+  background:
+    rgba(248, 245, 236, 0.95);
 
   color: ${DARK_TEAL};
 
@@ -572,16 +696,22 @@ const Wishlist = styled.button`
 
   transition: 0.2s ease;
 
+  z-index: 2;
+
   &:hover {
-    transform: scale(1.08);
+    transform:
+      scale(1.08);
   }
 `;
+
 
 const ProductInfo = styled.div`
   padding: 1rem;
 
   h3 {
-    font-size: ${(props) => props.theme.fontsm};
+    font-size:
+      ${(props) =>
+        props.theme.fontsm};
 
     font-weight: 500;
 
@@ -597,7 +727,8 @@ const ProductInfo = styled.div`
   .bottom {
     display: flex;
 
-    justify-content: space-between;
+    justify-content:
+      space-between;
 
     align-items: center;
 
@@ -605,13 +736,17 @@ const ProductInfo = styled.div`
   }
 
   .price {
-    font-size: ${(props) => props.theme.fontsm};
+    font-size:
+      ${(props) =>
+        props.theme.fontsm};
 
     font-weight: 600;
   }
 
   .rating {
-    font-size: ${(props) => props.theme.fontxs};
+    font-size:
+      ${(props) =>
+        props.theme.fontxs};
 
     color: ${DARK_TEAL};
   }
@@ -634,8 +769,9 @@ const ProductInfo = styled.div`
   }
 `;
 
+
 /* =========================================================
-   EMPTY STATE
+   STATES
 ========================================================= */
 
 const EmptyState = styled.div`
@@ -666,6 +802,27 @@ const EmptyState = styled.div`
   }
 `;
 
+
+const StateMessage = styled.div`
+  min-height: 20rem;
+
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  text-align: center;
+
+  background: ${IVORY};
+
+  border-radius: 1rem;
+
+  padding: 2rem;
+
+  color: ${MUTED_TEAL};
+`;
+
+
 /* =========================================================
    BOTTOM BAR
 ========================================================= */
@@ -673,7 +830,8 @@ const EmptyState = styled.div`
 const BottomBar = styled.div`
   display: flex;
 
-  justify-content: space-between;
+  justify-content:
+    space-between;
 
   align-items: center;
 
@@ -681,7 +839,9 @@ const BottomBar = styled.div`
 
   color: ${MUTED_TEAL};
 
-  font-size: ${(props) => props.theme.fontsm};
+  font-size:
+    ${(props) =>
+      props.theme.fontsm};
 
   @media (max-width: 48em) {
     flex-direction: column;
@@ -690,11 +850,13 @@ const BottomBar = styled.div`
   }
 `;
 
+
 const Pagination = styled.div`
   display: flex;
 
   gap: 0.4rem;
 `;
+
 
 const PageButton = styled.button`
   width: 2.5rem;
@@ -704,15 +866,17 @@ const PageButton = styled.button`
 
   border-radius: 0.6rem;
 
-  background: ${(props) =>
-    props.$active
-      ? DARK_TEAL
-      : IVORY};
+  background:
+    ${(props) =>
+      props.$active
+        ? DARK_TEAL
+        : IVORY};
 
-  color: ${(props) =>
-    props.$active
-      ? IVORY
-      : DARK_TEAL};
+  color:
+    ${(props) =>
+      props.$active
+        ? IVORY
+        : DARK_TEAL};
 
   cursor: pointer;
 
@@ -721,19 +885,51 @@ const PageButton = styled.button`
   transition: 0.2s ease;
 
   &:hover {
-    border-color: ${DARK_TEAL};
+    border-color:
+      ${DARK_TEAL};
   }
 `;
+
 
 /* =========================================================
    COMPONENT
 ========================================================= */
 
 const TrendyCollection = () => {
-  const [searchParams] = useSearchParams();
+
+  const [searchParams] =
+    useSearchParams();
+
+  const navigate = useNavigate();
+
+
+  /* =======================================================
+     URL FILTERS
+  ======================================================= */
 
   const skinTone =
-    searchParams.get("skinTone") || "fair";
+    (
+      searchParams.get("skinTone") ||
+      "fair"
+    ).toLowerCase();
+
+  const urlColor =
+    searchParams.get("color") ||
+    "";
+
+
+  /* =======================================================
+     STATES
+  ======================================================= */
+
+  const [products, setProducts] =
+    useState([]);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
 
   const [category, setCategory] =
     useState("All");
@@ -742,13 +938,63 @@ const TrendyCollection = () => {
     useState("");
 
   const [selectedColor, setSelectedColor] =
-    useState("");
+    useState(urlColor);
 
   const [sort, setSort] =
     useState("recommended");
 
   const [wishlist, setWishlist] =
     useState([]);
+
+
+  /* =======================================================
+     RECOMMENDED COLORS
+  ======================================================= */
+
+  const colors = useMemo(() => {
+
+    return (
+      recommendedColors[skinTone] ||
+      recommendedColors.fair
+    );
+
+  }, [skinTone]);
+
+
+  /* =======================================================
+     VALIDATE URL COLOR
+  ======================================================= */
+
+  useEffect(() => {
+
+    const isValidColor =
+      colors.some(
+        (color) =>
+          color.name.toLowerCase() ===
+          urlColor.toLowerCase()
+      );
+
+    if (urlColor && isValidColor) {
+
+      const matchingColor =
+        colors.find(
+          (color) =>
+            color.name.toLowerCase() ===
+            urlColor.toLowerCase()
+        );
+
+      setSelectedColor(
+        matchingColor?.name || ""
+      );
+
+    } else {
+
+      setSelectedColor("");
+
+    }
+
+  }, [urlColor, colors]);
+
 
   /* =======================================================
      FILTER OPTIONS
@@ -763,6 +1009,7 @@ const TrendyCollection = () => {
     "Bottoms",
   ];
 
+
   const sizes = [
     "XS",
     "S",
@@ -771,130 +1018,283 @@ const TrendyCollection = () => {
     "XL",
   ];
 
-  const colors = [
-    {
-      name: "Lavender",
-      value: "#B8A5D6",
-    },
-    {
-      name: "Sky Blue",
-      value: "#9DB8D9",
-    },
-    {
-      name: "Ivory",
-      value: "#F5F0E6",
-    },
-    {
-      name: "Peach",
-      value: "#F5B58F",
-    },
-    {
-      name: "Mint Green",
-      value: "#AFC8B8",
-    },
-    {
-      name: "Light Pink",
-      value: "#E8B9C0",
-    },
-    {
-      name: "Beige",
-      value: "#DCC5A7",
-    },
-  ];
 
   /* =======================================================
-     FILTER PRODUCTS
+     FETCH PRODUCTS
   ======================================================= */
 
-  const filteredProducts = useMemo(() => {
-    let result = trendyProducts.filter(
-      (product) =>
-        product.skinTones?.some(
-          (tone) =>
-            tone.toLowerCase() ===
-            skinTone.toLowerCase()
-        )
-    );
+  useEffect(() => {
 
-    /* CATEGORY */
+    const fetchProducts =
+      async () => {
 
-    if (category !== "All") {
-      result = result.filter(
-        (product) =>
-          product.category === category
-      );
-    }
+        try {
 
-    /* SIZE */
+          setLoading(true);
+          setError("");
 
-    if (selectedSize) {
-      result = result.filter((product) =>
-        product.sizes?.includes(selectedSize)
-      );
-    }
 
-    /* COLOR */
+          const params =
+            new URLSearchParams();
 
-    if (selectedColor) {
-      result = result.filter(
-        (product) =>
-          product.color === selectedColor
-      );
-    }
 
-    /* SORT */
+          /* COLLECTION */
 
-    if (sort === "low") {
-      result.sort(
-        (a, b) => a.price - b.price
-      );
-    }
+          params.set(
+            "collection",
+            "trendy"
+          );
 
-    if (sort === "high") {
-      result.sort(
-        (a, b) => b.price - a.price
-      );
-    }
 
-    if (sort === "rating") {
-      result.sort(
-        (a, b) => b.rating - a.rating
-      );
-    }
+          /* SKIN TONE */
 
-    return result;
+          if (skinTone) {
+
+            params.set(
+              "skinTone",
+              skinTone
+            );
+
+          }
+
+
+          /* CATEGORY */
+
+          if (
+            category !== "All"
+          ) {
+
+            params.set(
+              "category",
+              category
+            );
+
+          }
+
+
+          /* SIZE */
+
+          if (
+            selectedSize
+          ) {
+
+            params.set(
+              "size",
+              selectedSize
+            );
+
+          }
+
+
+          /* COLOR */
+
+          if (
+            selectedColor
+          ) {
+
+            params.set(
+              "color",
+              selectedColor
+            );
+
+          }
+
+
+          /* API REQUEST */
+
+          const response =
+            await fetch(
+              `http://localhost:5000/api/products?${params.toString()}`
+            );
+
+
+          if (
+            !response.ok
+          ) {
+
+            throw new Error(
+              "Failed to fetch products"
+            );
+
+          }
+
+
+          const data =
+            await response.json();
+
+
+          if (
+            !data.success
+          ) {
+
+            throw new Error(
+              "Unable to load products"
+            );
+
+          }
+
+
+          let result =
+            data.products || [];
+
+
+          /* =================================================
+             EXTRA SAFETY:
+             ONLY CURRENT SKIN TONE'S RECOMMENDED COLORS
+          ================================================= */
+
+          const allowedColorNames =
+            colors.map(
+              (color) =>
+                color.name.toLowerCase()
+            );
+
+
+          result =
+            result.filter(
+              (product) =>
+                allowedColorNames.includes(
+                  product.color?.toLowerCase()
+                )
+            );
+
+
+          /* =================================================
+             SORT
+          ================================================= */
+
+          if (
+            sort === "low"
+          ) {
+
+            result.sort(
+              (a, b) =>
+                a.price - b.price
+            );
+
+          }
+
+
+          if (
+            sort === "high"
+          ) {
+
+            result.sort(
+              (a, b) =>
+                b.price - a.price
+            );
+
+          }
+
+
+          if (
+            sort === "rating"
+          ) {
+
+            result.sort(
+              (a, b) =>
+                b.rating - a.rating
+            );
+
+          }
+
+
+          setProducts(
+            result
+          );
+
+        } catch (error) {
+
+          console.error(
+            "Products fetch error:",
+            error
+          );
+
+          setProducts([]);
+
+          setError(
+            "Unable to load products. Please try again."
+          );
+
+        } finally {
+
+          setLoading(false);
+
+        }
+
+      };
+
+
+    fetchProducts();
+
   }, [
     skinTone,
     category,
     selectedSize,
     selectedColor,
     sort,
+    colors,
   ]);
+
 
   /* =======================================================
      WISHLIST
   ======================================================= */
 
-  const toggleWishlist = (id) => {
-    setWishlist((previous) =>
-      previous.includes(id)
-        ? previous.filter(
-            (item) => item !== id
-          )
-        : [...previous, id]
-    );
-  };
+  const toggleWishlist =
+    (id) => {
+
+      setWishlist(
+        (previous) =>
+          previous.includes(id)
+            ? previous.filter(
+                (item) =>
+                  item !== id
+              )
+            : [
+                ...previous,
+                id,
+              ]
+      );
+
+    };
+
+
+  /* =======================================================
+     OPEN PRODUCT DETAIL
+  ======================================================= */
+
+  const openProduct =
+    (productId) => {
+
+      navigate(
+        `/product/${productId}`
+      );
+
+    };
+
 
   /* =======================================================
      CLEAR FILTERS
   ======================================================= */
 
-  const clearFilters = () => {
-    setCategory("All");
-    setSelectedSize("");
-    setSelectedColor("");
-    setSort("recommended");
-  };
+  const clearFilters =
+    () => {
+
+      setCategory("All");
+
+      setSelectedSize("");
+
+      setSelectedColor("");
+
+      setSort("recommended");
+
+    };
+
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <Page>
@@ -904,15 +1304,27 @@ const TrendyCollection = () => {
       ================================================= */}
 
       <Breadcrumb>
-        <span>Home</span>
 
-        <span>›</span>
+        <span>
+          Home
+        </span>
 
-        <span>Collections</span>
+        <span>
+          ›
+        </span>
 
-        <span>›</span>
+        <span>
+          Collections
+        </span>
 
-        <span>Trendy Collection</span>
+        <span>
+          ›
+        </span>
+
+        <span>
+          Trendy Collection
+        </span>
+
       </Breadcrumb>
 
 
@@ -936,8 +1348,6 @@ const TrendyCollection = () => {
         </div>
 
 
-        {/* SORT */}
-
         <SortBox>
 
           <span>
@@ -947,7 +1357,9 @@ const TrendyCollection = () => {
           <select
             value={sort}
             onChange={(event) =>
-              setSort(event.target.value)
+              setSort(
+                event.target.value
+              )
             }
           >
 
@@ -993,7 +1405,10 @@ const TrendyCollection = () => {
             </h2>
 
             <button
-              onClick={clearFilters}
+              type="button"
+              onClick={
+                clearFilters
+              }
             >
               Clear All
             </button>
@@ -1013,6 +1428,7 @@ const TrendyCollection = () => {
 
               {categories.map(
                 (item) => (
+
                   <RadioLabel
                     key={item}
                   >
@@ -1021,16 +1437,20 @@ const TrendyCollection = () => {
                       type="radio"
                       name="category"
                       checked={
-                        category === item
+                        category ===
+                        item
                       }
                       onChange={() =>
-                        setCategory(item)
+                        setCategory(
+                          item
+                        )
                       }
                     />
 
                     {item}
 
                   </RadioLabel>
+
                 )
               )}
 
@@ -1051,21 +1471,28 @@ const TrendyCollection = () => {
 
               {sizes.map(
                 (size) => (
+
                   <SizeButton
                     key={size}
+                    type="button"
                     $active={
-                      selectedSize === size
+                      selectedSize ===
+                      size
                     }
                     onClick={() =>
                       setSelectedSize(
-                        selectedSize === size
+                        selectedSize ===
+                        size
                           ? ""
                           : size
                       )
                     }
                   >
+
                     {size}
+
                   </SizeButton>
+
                 )
               )}
 
@@ -1084,9 +1511,13 @@ const TrendyCollection = () => {
 
             <PriceRange>
 
-              <div className="range" />
+              <div
+                className="range"
+              />
 
-              <div className="values">
+              <div
+                className="values"
+              >
 
                 <span>
                   ₹0
@@ -1103,7 +1534,7 @@ const TrendyCollection = () => {
           </FilterGroup>
 
 
-          {/* COLORS */}
+          {/* RECOMMENDED COLORS */}
 
           <FilterGroup>
 
@@ -1115,10 +1546,21 @@ const TrendyCollection = () => {
 
               {colors.map(
                 (color) => (
+
                   <ColorDot
-                    key={color.name}
-                    title={color.name}
-                    $color={color.value}
+                    key={
+                      color.name
+                    }
+                    type="button"
+                    title={
+                      color.name
+                    }
+                    aria-label={
+                      color.name
+                    }
+                    $color={
+                      color.value
+                    }
                     $active={
                       selectedColor ===
                       color.name
@@ -1126,12 +1568,13 @@ const TrendyCollection = () => {
                     onClick={() =>
                       setSelectedColor(
                         selectedColor ===
-                          color.name
+                        color.name
                           ? ""
                           : color.name
                       )
                     }
                   />
+
                 )
               )}
 
@@ -1143,7 +1586,7 @@ const TrendyCollection = () => {
           {/* APPLY */}
 
           <ApplyButton
-            onClick={() => {}}
+            type="button"
           >
             Apply Filters
           </ApplyButton>
@@ -1157,153 +1600,261 @@ const TrendyCollection = () => {
 
         <ProductsArea>
 
-          {filteredProducts.length > 0 ? (
+          {/* LOADING */}
 
-            <ProductGrid>
+          {loading && (
 
-              {filteredProducts.map(
-                (product) => (
-
-                  <ProductCard
-                    key={product.id}
-                  >
-
-                    {/* IMAGE */}
-
-                    <ProductImage>
-
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        loading="lazy"
-                      />
-
-                      <Wishlist
-                        onClick={() =>
-                          toggleWishlist(
-                            product.id
-                          )
-                        }
-                        aria-label="Add to wishlist"
-                      >
-
-                        {wishlist.includes(
-                          product.id
-                        )
-                          ? "♥"
-                          : "♡"}
-
-                      </Wishlist>
-
-                    </ProductImage>
-
-
-                    {/* INFO */}
-
-                    <ProductInfo>
-
-                      <h3>
-                        {product.name}
-                      </h3>
-
-                      <div className="bottom">
-
-                        <span className="price">
-                          ₹
-                          {product.price.toLocaleString(
-                            "en-IN"
-                          )}
-                        </span>
-
-                        <span className="rating">
-
-                          <span className="star">
-                            ★
-                          </span>
-
-                          {" "}
-
-                          {product.rating}
-
-                        </span>
-
-                      </div>
-
-                    </ProductInfo>
-
-                  </ProductCard>
-
-                )
-              )}
-
-            </ProductGrid>
-
-          ) : (
-
-            <EmptyState>
-
-              <h3>
-                No products found
-              </h3>
-
-              <p>
-                Try changing your filters
-                or selecting another shade.
-              </p>
-
-            </EmptyState>
+            <StateMessage>
+              Loading products...
+            </StateMessage>
 
           )}
+
+
+          {/* ERROR */}
+
+          {!loading &&
+            error && (
+
+              <StateMessage>
+                {error}
+              </StateMessage>
+
+            )}
+
+
+          {/* PRODUCTS */}
+
+          {!loading &&
+            !error &&
+            products.length > 0 && (
+
+              <ProductGrid>
+
+                {products.map(
+                  (product) => (
+
+                    <ProductCard
+                      key={product._id}
+                      role="button"
+                      tabIndex={0}
+                      onClick={() =>
+                        openProduct(
+                          product._id
+                        )
+                      }
+                      onKeyDown={(event) => {
+
+                        if (
+                          event.key ===
+                            "Enter" ||
+                          event.key ===
+                            " "
+                        ) {
+
+                          event.preventDefault();
+
+                          openProduct(
+                            product._id
+                          );
+
+                        }
+
+                      }}
+                    >
+
+                      <ProductImage>
+
+                        <img
+                          src={
+                            product.image
+                          }
+                          alt={
+                            product.name
+                          }
+                          loading="lazy"
+                        />
+
+
+                        <Wishlist
+                          type="button"
+                          onClick={(event) => {
+
+                            /*
+                              Prevent product
+                              detail page from
+                              opening when
+                              wishlist is clicked.
+                            */
+
+                            event.stopPropagation();
+
+                            toggleWishlist(
+                              product._id
+                            );
+
+                          }}
+                          aria-label="Add to wishlist"
+                        >
+
+                          {wishlist.includes(
+                            product._id
+                          )
+                            ? "♥"
+                            : "♡"}
+
+                        </Wishlist>
+
+                      </ProductImage>
+
+
+                      <ProductInfo>
+
+                        <h3>
+                          {
+                            product.name
+                          }
+                        </h3>
+
+
+                        <div className="bottom">
+
+                          <span className="price">
+
+                            ₹
+                            {product.price.toLocaleString(
+                              "en-IN"
+                            )}
+
+                          </span>
+
+
+                          <span className="rating">
+
+                            <span className="star">
+                              ★
+                            </span>
+
+                            {" "}
+
+                            {
+                              product.rating
+                            }
+
+                          </span>
+
+                        </div>
+
+                      </ProductInfo>
+
+                    </ProductCard>
+
+                  )
+                )}
+
+              </ProductGrid>
+
+            )}
+
+
+          {/* EMPTY */}
+
+          {!loading &&
+            !error &&
+            products.length ===
+              0 && (
+
+              <EmptyState>
+
+                <h3>
+                  No products found
+                </h3>
+
+                <p>
+                  Try changing your filters
+                  or selecting another shade.
+                </p>
+
+              </EmptyState>
+
+            )}
 
 
           {/* =================================================
               BOTTOM BAR
           ================================================= */}
 
-          <BottomBar>
+          {!loading &&
+            !error &&
+            products.length > 0 && (
 
-            <span>
-              Showing 1 –{" "}
-              {filteredProducts.length}{" "}
-              of{" "}
-              {filteredProducts.length}{" "}
-              results
-            </span>
+              <BottomBar>
+
+                <span>
+
+                  Showing 1 –{" "}
+                  {
+                    products.length
+                  }{" "}
+                  of{" "}
+                  {
+                    products.length
+                  }{" "}
+                  results
+
+                </span>
 
 
-            <Pagination>
+                <Pagination>
 
-              <PageButton>
-                ←
-              </PageButton>
+                  <PageButton
+                    type="button"
+                  >
+                    ←
+                  </PageButton>
 
-              <PageButton $active>
-                1
-              </PageButton>
+                  <PageButton
+                    type="button"
+                    $active
+                  >
+                    1
+                  </PageButton>
 
-              <PageButton>
-                2
-              </PageButton>
+                  <PageButton
+                    type="button"
+                  >
+                    2
+                  </PageButton>
 
-              <PageButton>
-                3
-              </PageButton>
+                  <PageButton
+                    type="button"
+                  >
+                    3
+                  </PageButton>
 
-              <PageButton>
-                4
-              </PageButton>
+                  <PageButton
+                    type="button"
+                  >
+                    4
+                  </PageButton>
 
-              <PageButton>
-                5
-              </PageButton>
+                  <PageButton
+                    type="button"
+                  >
+                    5
+                  </PageButton>
 
-              <PageButton>
-                →
-              </PageButton>
+                  <PageButton
+                    type="button"
+                  >
+                    →
+                  </PageButton>
 
-            </Pagination>
+                </Pagination>
 
-          </BottomBar>
+              </BottomBar>
+
+            )}
 
         </ProductsArea>
 
@@ -1312,5 +1863,6 @@ const TrendyCollection = () => {
     </Page>
   );
 };
+
 
 export default TrendyCollection;

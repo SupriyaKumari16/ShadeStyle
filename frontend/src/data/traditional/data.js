@@ -1,4 +1,4 @@
-// src/data/traditional/data.js
+
 
 export const traditionalProducts = [
   {

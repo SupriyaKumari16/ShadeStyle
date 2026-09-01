@@ -1,10 +1,16 @@
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
+
+
+/* =========================================================
+   SKIN TONE DATA
+========================================================= */
 
 const skinToneData = {
   Fair: {
     title: "Fair Skin Tone",
+
     colors: [
       { name: "Lavender", color: "#B8A5D6" },
       { name: "Sky Blue", color: "#9DB8D9" },
@@ -19,6 +25,7 @@ const skinToneData = {
 
   Light: {
     title: "Light Skin Tone",
+
     colors: [
       { name: "Rose", color: "#D88C9A" },
       { name: "Dusty Blue", color: "#91A9C7" },
@@ -33,6 +40,7 @@ const skinToneData = {
 
   Medium: {
     title: "Medium Skin Tone",
+
     colors: [
       { name: "Terracotta", color: "#C56B4A" },
       { name: "Olive", color: "#7D8060" },
@@ -47,6 +55,7 @@ const skinToneData = {
 
   Olive: {
     title: "Olive Skin Tone",
+
     colors: [
       { name: "Emerald", color: "#287A62" },
       { name: "Burgundy", color: "#6D2638" },
@@ -61,6 +70,7 @@ const skinToneData = {
 
   Tan: {
     title: "Tan Skin Tone",
+
     colors: [
       { name: "Rust", color: "#A94F32" },
       { name: "Camel", color: "#B88A5A" },
@@ -75,6 +85,7 @@ const skinToneData = {
 
   Dusky: {
     title: "Dusky Skin Tone",
+
     colors: [
       { name: "Royal Blue", color: "#3155A5" },
       { name: "Wine", color: "#722F45" },
@@ -89,6 +100,7 @@ const skinToneData = {
 
   Deep: {
     title: "Deep Skin Tone",
+
     colors: [
       { name: "Emerald", color: "#087A5B" },
       { name: "Cobalt Blue", color: "#3158B7" },
@@ -103,6 +115,7 @@ const skinToneData = {
 
   RichDeep: {
     title: "Rich Deep Skin Tone",
+
     colors: [
       { name: "Magenta", color: "#A72F68" },
       { name: "Royal Purple", color: "#61358F" },
@@ -116,27 +129,33 @@ const skinToneData = {
   },
 };
 
-/* =========================
+
+/* =========================================================
    SECTION
-========================= */
+========================================================= */
 
 const Section = styled.section`
   min-height: 100vh;
+
   width: 100%;
 
   padding: 7rem 5vw 6rem;
 
   box-sizing: border-box;
 
-  background-color: ${(props) => props.theme.body};
-  color: ${(props) => props.theme.text};
+  background-color:
+    ${(props) => props.theme.body};
+
+  color:
+    ${(props) => props.theme.text};
 
   position: relative;
 `;
 
-/* =========================
+
+/* =========================================================
    HEADER
-========================= */
+========================================================= */
 
 const Header = styled.div`
   text-align: center;
@@ -145,42 +164,52 @@ const Header = styled.div`
 
   h1 {
     font-family: "Kaushan Script";
-    font-size: ${(props) => props.theme.fontxxxl};
+
+    font-size:
+      ${(props) => props.theme.fontxxxl};
+
     font-weight: 400;
 
     margin-bottom: 1rem;
   }
 
   p {
-    font-size: ${(props) => props.theme.fontmd};
+    font-size:
+      ${(props) => props.theme.fontmd};
+
     opacity: 0.8;
   }
 
   @media (max-width: 64em) {
     h1 {
-      font-size: ${(props) => props.theme.fontxxl};
+      font-size:
+        ${(props) => props.theme.fontxxl};
     }
   }
 
   @media (max-width: 48em) {
     h1 {
-      font-size: ${(props) => props.theme.fontxl};
+      font-size:
+        ${(props) => props.theme.fontxl};
     }
 
     p {
-      font-size: ${(props) => props.theme.fontsm};
+      font-size:
+        ${(props) => props.theme.fontsm};
     }
   }
 `;
 
-/* =========================
+
+/* =========================================================
    SKIN INFO
-========================= */
+========================================================= */
 
 const SkinInfo = styled.div`
   display: flex;
 
   justify-content: center;
+
   align-items: center;
 
   gap: 0.7rem;
@@ -189,6 +218,7 @@ const SkinInfo = styled.div`
 
   .dot {
     width: 11px;
+
     height: 11px;
 
     border-radius: 50%;
@@ -197,32 +227,44 @@ const SkinInfo = styled.div`
   }
 
   span:last-child {
-    font-size: ${(props) => props.theme.fontmd};
+    font-size:
+      ${(props) => props.theme.fontmd};
+
     font-weight: 600;
   }
 `;
 
-/* =========================
-   COLORS
-========================= */
+
+/* =========================================================
+   COLORS TITLE
+========================================================= */
 
 const ColorsTitle = styled.h2`
   text-align: center;
 
-  font-size: ${(props) => props.theme.fontxl};
+  font-size:
+    ${(props) => props.theme.fontxl};
+
   font-weight: 500;
 
   margin-bottom: 2rem;
 
   @media (max-width: 48em) {
-    font-size: ${(props) => props.theme.fontlg};
+    font-size:
+      ${(props) => props.theme.fontlg};
   }
 `;
+
+
+/* =========================================================
+   COLORS
+========================================================= */
 
 const Colors = styled.div`
   display: flex;
 
   justify-content: center;
+
   align-items: flex-start;
 
   gap: 2.2rem;
@@ -231,6 +273,12 @@ const Colors = styled.div`
 
   margin-bottom: 6rem;
 `;
+
+
+/* =========================================================
+   COLOR
+   DISPLAY ONLY - NOT CLICKABLE
+========================================================= */
 
 const Color = styled.div`
   display: flex;
@@ -241,33 +289,39 @@ const Color = styled.div`
 
   gap: 0.7rem;
 
+  border: none;
+
+  background: transparent;
+
+  padding: 0;
+
+  font-family: inherit;
+
+  color:
+    ${(props) => props.theme.text};
+
   .circle {
     width: 5rem;
+
     height: 5rem;
 
     border-radius: 50%;
 
-    background-color: ${(props) => props.$color};
+    background-color:
+      ${(props) => props.$color};
 
-    border: 1px solid rgba(0, 0, 0, 0.08);
-
-    box-shadow:
-      0 8px 20px rgba(0, 0, 0, 0.08);
-
-    transition:
-      transform 0.3s ease,
-      box-shadow 0.3s ease;
-  }
-
-  &:hover .circle {
-    transform: translateY(-6px) scale(1.05);
+    border:
+      1px solid
+      rgba(0, 0, 0, 0.08);
 
     box-shadow:
-      0 12px 25px rgba(0, 0, 0, 0.14);
+      0 8px 20px
+      rgba(0, 0, 0, 0.08);
   }
 
   span {
-    font-size: ${(props) => props.theme.fontxs};
+    font-size:
+      ${(props) => props.theme.fontxs};
 
     text-align: center;
   }
@@ -275,25 +329,29 @@ const Color = styled.div`
   @media (max-width: 48em) {
     .circle {
       width: 3.8rem;
+
       height: 3.8rem;
     }
   }
 `;
 
-/* =========================
+
+/* =========================================================
    COLLECTION TITLE
-========================= */
+========================================================= */
 
 const CollectionsTitle = styled.div`
   display: flex;
 
   justify-content: space-between;
+
   align-items: center;
 
   margin-bottom: 2rem;
 
   h2 {
-    font-size: ${(props) => props.theme.fontxl};
+    font-size:
+      ${(props) => props.theme.fontxl};
 
     font-weight: 500;
   }
@@ -303,15 +361,18 @@ const CollectionsTitle = styled.div`
 
     background: transparent;
 
-    color: ${(props) => props.theme.text};
+    color:
+      ${(props) => props.theme.text};
 
     font-family: inherit;
 
     cursor: pointer;
 
-    font-size: ${(props) => props.theme.fontsm};
+    font-size:
+      ${(props) => props.theme.fontsm};
 
-    transition: opacity 0.3s ease;
+    transition:
+      opacity 0.3s ease;
 
     &:hover {
       opacity: 0.6;
@@ -320,24 +381,28 @@ const CollectionsTitle = styled.div`
 
   @media (max-width: 48em) {
     h2 {
-      font-size: ${(props) => props.theme.fontlg};
+      font-size:
+        ${(props) => props.theme.fontlg};
     }
   }
 `;
 
-/* =========================
+
+/* =========================================================
    COLLECTIONS
-========================= */
+========================================================= */
 
 const Collections = styled.div`
   display: grid;
 
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns:
+    repeat(3, 1fr);
 
   gap: 2rem;
 
   @media (max-width: 64em) {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns:
+      repeat(2, 1fr);
   }
 
   @media (max-width: 48em) {
@@ -345,9 +410,10 @@ const Collections = styled.div`
   }
 `;
 
-/* =========================
+
+/* =========================================================
    COLLECTION CARD
-========================= */
+========================================================= */
 
 const CollectionCard = styled.div`
   position: relative;
@@ -358,12 +424,14 @@ const CollectionCard = styled.div`
 
   border-radius: 1rem;
 
-  background-color: ${(props) => props.theme.grey};
+  background-color:
+    ${(props) => props.theme.grey};
 
   cursor: pointer;
 
   img {
     width: 100%;
+
     height: 100%;
 
     object-fit: cover;
@@ -375,7 +443,8 @@ const CollectionCard = styled.div`
   }
 
   &:hover img {
-    transform: scale(1.06);
+    transform:
+      scale(1.06);
   }
 
   .overlay {
@@ -393,21 +462,24 @@ const CollectionCard = styled.div`
 
     color: #ffffff;
 
-    background: linear-gradient(
-      to top,
-      rgba(0, 0, 0, 0.75),
-      rgba(0, 0, 0, 0.05) 70%
-    );
+    background:
+      linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.75),
+        rgba(0, 0, 0, 0.05) 70%
+      );
   }
 
   h3 {
-    font-size: ${(props) => props.theme.fontxl};
+    font-size:
+      ${(props) => props.theme.fontxl};
 
     margin-bottom: 0.5rem;
   }
 
   p {
-    font-size: ${(props) => props.theme.fontsm};
+    font-size:
+      ${(props) => props.theme.fontsm};
 
     opacity: 0.9;
   }
@@ -416,102 +488,224 @@ const CollectionCard = styled.div`
     height: 24rem;
 
     h3 {
-      font-size: ${(props) => props.theme.fontlg};
+      font-size:
+        ${(props) => props.theme.fontlg};
     }
   }
 `;
 
-/* =========================
+
+/* =========================================================
    COMPONENT
-========================= */
+========================================================= */
 
 const YourBestColors = () => {
+
   const { tone } = useParams();
 
+  const navigate = useNavigate();
+
+
+  /* =======================================================
+     TONE MAP
+  ======================================================= */
+
   const toneMap = {
+
     fair: "Fair",
+
     light: "Light",
+
     medium: "Medium",
+
     olive: "Olive",
+
     tan: "Tan",
+
     dusky: "Dusky",
+
     deep: "Deep",
+
     "deep-dark": "RichDeep",
+
   };
 
-  const selectedTone = toneMap[tone] || "Fair";
+
+  const selectedTone =
+    toneMap[tone] || "Fair";
+
 
   const currentTone =
-    skinToneData[selectedTone] || skinToneData.Fair;
+    skinToneData[selectedTone] ||
+    skinToneData.Fair;
+
+
+  /* =======================================================
+     TRENDY
+  ======================================================= */
+
+  const handleTrendyClick = () => {
+
+    navigate(
+      `/collection/trendy?skinTone=${encodeURIComponent(
+        selectedTone
+      )}`
+    );
+
+  };
+
+
+  /* =======================================================
+     TRADITIONAL
+  ======================================================= */
+
+  const handleTraditionalClick = () => {
+
+    navigate(
+      `/collection/traditional?skinTone=${encodeURIComponent(
+        selectedTone
+      )}`
+    );
+
+  };
+
+
+  /* =======================================================
+     JEWELLERY
+  ======================================================= */
+
+  const handleJewelleryClick = () => {
+
+    navigate(
+      "/collection/jewellery"
+    );
+
+  };
+
+
+  /* =======================================================
+     RENDER
+  ======================================================= */
 
   return (
     <Section id="best-colors">
 
-      {/* HEADER */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <Header>
+
         <SkinInfo>
+
           <span className="dot" />
 
           <span>
             {currentTone.title}
           </span>
+
         </SkinInfo>
+
 
         <h1>
           Your Best Colors
         </h1>
 
+
         <p>
           Discover the shades that complement
           your natural skin tone.
         </p>
+
       </Header>
 
-      {/* COLOR PALETTE */}
+
+      {/* =================================================
+          COLOR PALETTE
+          DISPLAY ONLY
+      ================================================= */}
 
       <ColorsTitle>
         Recommended Shades
       </ColorsTitle>
 
-      <Colors>
-        {currentTone.colors.map((item) => (
-          <Color
-            key={item.name}
-            $color={item.color}
-          >
-            <div className="circle" />
 
-            <span>
-              {item.name}
-            </span>
-          </Color>
-        ))}
+      <Colors>
+
+        {currentTone.colors.map(
+          (item) => (
+
+            <Color
+              key={item.name}
+              $color={item.color}
+            >
+
+              <div className="circle" />
+
+              <span>
+                {item.name}
+              </span>
+
+            </Color>
+
+          )
+        )}
+
       </Colors>
 
-      {/* COLLECTIONS */}
+
+      {/* =================================================
+          COLLECTION TITLE
+      ================================================= */}
 
       <CollectionsTitle>
+
         <h2>
           Shop By Category
         </h2>
 
-        <button>
+
+        <button
+          type="button"
+          onClick={() =>
+            navigate(
+              `/collection/trendy?skinTone=${encodeURIComponent(
+                selectedTone
+              )}`
+            )
+          }
+        >
           See All →
         </button>
+
       </CollectionsTitle>
+
+
+      {/* =================================================
+          COLLECTIONS
+      ================================================= */}
 
       <Collections>
 
-        {/* TRENDY */}
 
-        <CollectionCard>
+        {/* =================================================
+            TRENDY
+        ================================================= */}
+
+        <CollectionCard
+          onClick={
+            handleTrendyClick
+          }
+        >
+
           <img
             src="/images/trendy-collection.jpg"
             alt="Trendy Collection"
           />
 
+
           <div className="overlay">
+
             <h3>
               Trendy Collection
             </h3>
@@ -519,18 +713,30 @@ const YourBestColors = () => {
             <p>
               Latest styles curated for you
             </p>
+
           </div>
+
         </CollectionCard>
 
-        {/* TRADITIONAL */}
 
-        <CollectionCard>
+        {/* =================================================
+            TRADITIONAL
+        ================================================= */}
+
+        <CollectionCard
+          onClick={
+            handleTraditionalClick
+          }
+        >
+
           <img
             src="/images/traditional-collection.jpg"
             alt="Traditional Collection"
           />
 
+
           <div className="overlay">
+
             <h3>
               Traditional Collection
             </h3>
@@ -538,18 +744,30 @@ const YourBestColors = () => {
             <p>
               Elegant and timeless ethnic wear
             </p>
+
           </div>
+
         </CollectionCard>
 
-        {/* JEWELLERY */}
 
-        <CollectionCard>
+        {/* =================================================
+            JEWELLERY
+        ================================================= */}
+
+        <CollectionCard
+          onClick={
+            handleJewelleryClick
+          }
+        >
+
           <img
             src="/images/jewelry-collection.jpg"
             alt="Jewellery Collection"
           />
 
+
           <div className="overlay">
+
             <h3>
               Jewellery Collection
             </h3>
@@ -557,13 +775,17 @@ const YourBestColors = () => {
             <p>
               Elegant accessories for your look
             </p>
+
           </div>
+
         </CollectionCard>
+
 
       </Collections>
 
     </Section>
   );
 };
+
 
 export default YourBestColors;

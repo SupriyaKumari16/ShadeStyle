@@ -28,13 +28,18 @@ import TrendyCollection from "./collections/TrendyCollection";
 import TraditionalCollection from "./collections/TraditionalCollection";
 import JewelleryCollection from "./collections/JewelleryCollection";
 
+import ProductDetail from "./pages/ProductDetail";
+import Wishlist from "./pages/Wishlist";
+
+import { WishlistProvider } from "./context/WishlistContext";
+
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark } from "./styles/Themes";
 
 
 /* =====================================================
    MAIN WEBSITE
-   Locomotive Scroll is used ONLY here.
+   Locomotive Scroll is used ONLY here
 ===================================================== */
 
 function MainWebsite() {
@@ -144,85 +149,97 @@ function App() {
 
       <ThemeProvider theme={dark}>
 
-        <Routes>
+        <WishlistProvider>
 
-          {/* =================================================
-              MAIN WEBSITE
+          <Routes>
 
-              Locomotive Scroll ONLY exists inside
-              MainWebsite.
-          ================================================= */}
+            {/* =================================================
+                MAIN WEBSITE
+            ================================================= */}
 
-          <Route
-            path="/"
-            element={<MainWebsite />}
-          />
-
-
-          {/* =================================================
-              YOUR BEST COLORS
-
-              Normal React page.
-              NO Locomotive Scroll.
-          ================================================= */}
-
-          <Route
-            path="/best-colors/:tone"
-            element={<YourBestColors />}
-          />
+            <Route
+              path="/"
+              element={<MainWebsite />}
+            />
 
 
-          {/* =================================================
-              TRENDY COLLECTION
+            {/* =================================================
+                YOUR BEST COLORS
+            ================================================= */}
 
-              Normal React page.
-          ================================================= */}
-
-          <Route
-            path="/collection/trendy"
-            element={<TrendyCollection />}
-          />
+            <Route
+              path="/best-colors/:tone"
+              element={<YourBestColors />}
+            />
 
 
-          {/* =================================================
-              TRADITIONAL COLLECTION
+            {/* =================================================
+                TRENDY COLLECTION
+            ================================================= */}
 
-              Normal React page.
-          ================================================= */}
-
-          <Route
-            path="/collection/traditional"
-            element={<TraditionalCollection />}
-          />
+            <Route
+              path="/collection/trendy"
+              element={<TrendyCollection />}
+            />
 
 
-          {/* =================================================
-              JEWELLERY COLLECTION
+            {/* =================================================
+                TRADITIONAL COLLECTION
+            ================================================= */}
 
-              Normal React page.
-          ================================================= */}
-
-          <Route
-            path="/collection/jewellery"
-            element={<JewelleryCollection />}
-          />
+            <Route
+              path="/collection/traditional"
+              element={<TraditionalCollection />}
+            />
 
 
-          {/* =================================================
-              INVALID URL
-          ================================================= */}
+            {/* =================================================
+                JEWELLERY COLLECTION
+            ================================================= */}
 
-          <Route
-            path="*"
-            element={
-              <Navigate
-                to="/"
-                replace
-              />
-            }
-          />
+            <Route
+              path="/collection/jewellery"
+              element={<JewelleryCollection />}
+            />
 
-        </Routes>
+
+            {/* =================================================
+                PRODUCT DETAIL
+            ================================================= */}
+
+            <Route
+              path="/product/:id"
+              element={<ProductDetail />}
+            />
+
+
+            {/* =================================================
+                WISHLIST
+            ================================================= */}
+
+            <Route
+              path="/wishlist"
+              element={<Wishlist />}
+            />
+
+
+            {/* =================================================
+                INVALID URL
+            ================================================= */}
+
+            <Route
+              path="*"
+              element={
+                <Navigate
+                  to="/"
+                  replace
+                />
+              }
+            />
+
+          </Routes>
+
+        </WishlistProvider>
 
       </ThemeProvider>
     </>

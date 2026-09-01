@@ -1,11 +1,10 @@
-import React, { useMemo, useState } from "react";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import styled from "styled-components";
-
-import { jewelleryProducts } from "../data/jewellery/data";
-
-/* =========================================================
-   COLORS
-========================================================= */
+import { useNavigate } from "react-router-dom";
 
 const PAGE_BG = "#EAF2EC";
 const IVORY = "#F8F5EC";
@@ -15,19 +14,12 @@ const MUTED_TEAL = "#55716D";
 const BORDER = "rgba(18, 63, 61, 0.12)";
 const ACCENT = "#D99A78";
 
-/* =========================================================
-   PAGE
-========================================================= */
-
 const Page = styled.main`
   min-height: 100vh;
   width: 100%;
-
   box-sizing: border-box;
-
   background: ${PAGE_BG};
   color: ${DARK_TEAL};
-
   padding: 7rem 5vw 5rem;
 
   @media (max-width: 48em) {
@@ -35,19 +27,12 @@ const Page = styled.main`
   }
 `;
 
-/* =========================================================
-   BREADCRUMB
-========================================================= */
-
 const Breadcrumb = styled.div`
   display: flex;
   align-items: center;
   gap: 0.6rem;
-
   margin-bottom: 2.5rem;
-
   font-size: ${(props) => props.theme.fontsm};
-
   color: ${MUTED_TEAL};
 
   span:last-child {
@@ -59,39 +44,25 @@ const Breadcrumb = styled.div`
   }
 `;
 
-/* =========================================================
-   HEADER
-========================================================= */
-
 const Header = styled.div`
   display: flex;
-
   justify-content: space-between;
   align-items: flex-end;
-
   gap: 2rem;
-
   margin-bottom: 3rem;
 
   h1 {
     font-family: "Kaushan Script";
-
     font-size: ${(props) => props.theme.fontxxxl};
-
     font-weight: 400;
-
     line-height: 1;
   }
 
   .description {
     margin-top: 1rem;
-
     max-width: 32rem;
-
     color: ${MUTED_TEAL};
-
     font-size: ${(props) => props.theme.fontmd};
-
     line-height: 1.6;
   }
 
@@ -103,7 +74,6 @@ const Header = styled.div`
 
   @media (max-width: 48em) {
     flex-direction: column;
-
     align-items: flex-start;
 
     h1 {
@@ -112,51 +82,29 @@ const Header = styled.div`
   }
 `;
 
-/* =========================================================
-   SORT
-========================================================= */
-
 const SortBox = styled.div`
   display: flex;
-
   align-items: center;
-
   gap: 0.8rem;
-
   white-space: nowrap;
 
   select {
     appearance: none;
-
     border: 1px solid ${BORDER};
-
     background: ${IVORY};
-
     color: ${DARK_TEAL};
-
     padding: 0.9rem 2.8rem 0.9rem 1rem;
-
     border-radius: 0.8rem;
-
     font-family: inherit;
-
     cursor: pointer;
-
     outline: none;
   }
 `;
 
-/* =========================================================
-   CONTENT
-========================================================= */
-
 const Content = styled.div`
   display: grid;
-
   grid-template-columns: 16rem 1fr;
-
   gap: 2rem;
-
   align-items: start;
 
   @media (max-width: 64em) {
@@ -168,58 +116,38 @@ const Content = styled.div`
   }
 `;
 
-/* =========================================================
-   FILTER SIDEBAR
-========================================================= */
-
 const FilterSidebar = styled.aside`
   background: ${IVORY};
-
   border: 1px solid ${BORDER};
-
   border-radius: 1rem;
-
   padding: 1.5rem;
-
   position: sticky;
-
   top: 6rem;
-
   box-shadow: 0 10px 30px rgba(18, 63, 61, 0.04);
 
   @media (max-width: 48em) {
     position: relative;
-
     top: 0;
   }
 `;
 
 const FilterHeader = styled.div`
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   margin-bottom: 2rem;
 
   h2 {
     font-size: ${(props) => props.theme.fontlg};
-
     font-weight: 600;
   }
 
   button {
     border: none;
-
     background: transparent;
-
     color: ${MUTED_TEAL};
-
     font-family: inherit;
-
     cursor: pointer;
-
     font-size: ${(props) => props.theme.fontxs};
   }
 `;
@@ -229,44 +157,31 @@ const FilterGroup = styled.div`
 
   h3 {
     font-size: ${(props) => props.theme.fontsm};
-
     margin-bottom: 1rem;
-
     font-weight: 600;
   }
 `;
 
 const RadioList = styled.div`
   display: flex;
-
   flex-direction: column;
-
   gap: 0.75rem;
 `;
 
 const RadioLabel = styled.label`
   display: flex;
-
   align-items: center;
-
   gap: 0.7rem;
-
   font-size: ${(props) => props.theme.fontsm};
-
   cursor: pointer;
 
   input {
     appearance: none;
-
     width: 1rem;
     height: 1rem;
-
     border: 1px solid ${MUTED_TEAL};
-
     border-radius: 50%;
-
     position: relative;
-
     cursor: pointer;
 
     &:checked {
@@ -275,54 +190,35 @@ const RadioLabel = styled.label`
 
     &:checked::after {
       content: "";
-
       position: absolute;
-
       width: 0.45rem;
       height: 0.45rem;
-
       border-radius: 50%;
-
       background: ${DARK_TEAL};
-
       top: 50%;
       left: 50%;
-
       transform: translate(-50%, -50%);
     }
   }
 `;
 
-/* =========================================================
-   PRICE
-========================================================= */
-
 const PriceRange = styled.div`
   .range {
     position: relative;
-
     height: 2px;
-
     background: #b7c8c0;
-
     margin: 1.3rem 0;
   }
 
   .range::before,
   .range::after {
     content: "";
-
     position: absolute;
-
     top: 50%;
-
     width: 12px;
     height: 12px;
-
     border-radius: 50%;
-
     background: ${ACCENT};
-
     transform: translateY(-50%);
   }
 
@@ -336,43 +232,27 @@ const PriceRange = styled.div`
 
   .values {
     display: flex;
-
     justify-content: space-between;
-
     font-size: ${(props) => props.theme.fontxs};
-
     color: ${MUTED_TEAL};
   }
 `;
 
-/* =========================================================
-   COLORS
-========================================================= */
-
 const ColorList = styled.div`
   display: flex;
-
   gap: 0.6rem;
-
   flex-wrap: wrap;
 `;
 
 const ColorDot = styled.button`
   width: 2rem;
   height: 2rem;
-
   border-radius: 50%;
-
   border: 2px solid
     ${(props) =>
-      props.$active
-        ? DARK_TEAL
-        : "transparent"};
-
+      props.$active ? DARK_TEAL : "transparent"};
   background: ${(props) => props.$color};
-
   cursor: pointer;
-
   transition: 0.2s ease;
 
   &:hover {
@@ -380,41 +260,22 @@ const ColorDot = styled.button`
   }
 `;
 
-/* =========================================================
-   APPLY
-========================================================= */
-
 const ApplyButton = styled.button`
   width: 100%;
-
   border: none;
-
   background: ${DARK_TEAL};
-
   color: ${IVORY};
-
   padding: 0.9rem;
-
   border-radius: 0.7rem;
-
   font-family: inherit;
-
   cursor: pointer;
-
-  transition:
-    transform 0.25s ease,
-    opacity 0.25s ease;
+  transition: 0.25s ease;
 
   &:hover {
     transform: translateY(-2px);
-
     opacity: 0.9;
   }
 `;
-
-/* =========================================================
-   PRODUCTS
-========================================================= */
 
 const ProductsArea = styled.div`
   min-width: 0;
@@ -422,9 +283,7 @@ const ProductsArea = styled.div`
 
 const ProductGrid = styled.div`
   display: grid;
-
   grid-template-columns: repeat(4, 1fr);
-
   gap: 1.2rem;
 
   @media (max-width: 75em) {
@@ -437,56 +296,41 @@ const ProductGrid = styled.div`
 
   @media (max-width: 30em) {
     grid-template-columns: repeat(2, 1fr);
-
     gap: 0.7rem;
   }
 `;
 
-/* =========================================================
-   PRODUCT CARD
-========================================================= */
-
 const ProductCard = styled.article`
   background: ${IVORY};
-
   border-radius: 0.9rem;
-
   overflow: hidden;
-
   border: 1px solid ${BORDER};
-
-  transition:
-    transform 0.35s ease,
-    box-shadow 0.35s ease;
+  cursor: pointer;
+  transition: 0.35s ease;
 
   &:hover {
     transform: translateY(-5px);
+    box-shadow: 0 15px 30px rgba(18, 63, 61, 0.1);
+  }
 
-    box-shadow:
-      0 15px 30px
-        rgba(18, 63, 61, 0.1);
+  &:focus-visible {
+    outline: 2px solid ${DARK_TEAL};
+    outline-offset: 3px;
   }
 `;
 
 const ProductImage = styled.div`
   position: relative;
-
   width: 100%;
-
   aspect-ratio: 0.78;
-
   background: ${SOFT_IVORY};
-
   overflow: hidden;
 
   img {
     width: 100%;
     height: 100%;
-
     object-fit: cover;
-
     display: block;
-
     transition: transform 0.5s ease;
   }
 
@@ -497,31 +341,21 @@ const ProductImage = styled.div`
 
 const Wishlist = styled.button`
   position: absolute;
-
   top: 0.7rem;
   right: 0.7rem;
-
   width: 2.3rem;
   height: 2.3rem;
-
   border-radius: 50%;
-
   border: none;
-
   background: rgba(248, 245, 236, 0.95);
-
   color: ${DARK_TEAL};
-
   display: flex;
-
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-
   font-size: 1rem;
-
   transition: 0.2s ease;
+  z-index: 2;
 
   &:hover {
     transform: scale(1.08);
@@ -533,37 +367,27 @@ const ProductInfo = styled.div`
 
   h3 {
     font-size: ${(props) => props.theme.fontsm};
-
     font-weight: 500;
-
     margin-bottom: 0.6rem;
-
     white-space: nowrap;
-
     overflow: hidden;
-
     text-overflow: ellipsis;
   }
 
   .bottom {
     display: flex;
-
     justify-content: space-between;
-
     align-items: center;
-
     gap: 0.5rem;
   }
 
   .price {
     font-size: ${(props) => props.theme.fontsm};
-
     font-weight: 600;
   }
 
   .rating {
     font-size: ${(props) => props.theme.fontxs};
-
     color: ${DARK_TEAL};
   }
 
@@ -585,90 +409,57 @@ const ProductInfo = styled.div`
   }
 `;
 
-/* =========================================================
-   EMPTY STATE
-========================================================= */
-
 const EmptyState = styled.div`
   min-height: 20rem;
-
   display: flex;
-
   flex-direction: column;
-
   justify-content: center;
-
   align-items: center;
-
   text-align: center;
-
   background: ${IVORY};
-
   border-radius: 1rem;
-
   padding: 2rem;
-
   color: ${MUTED_TEAL};
 
   h3 {
     color: ${DARK_TEAL};
-
     margin-bottom: 0.5rem;
   }
 `;
 
-/* =========================================================
-   BOTTOM BAR
-========================================================= */
-
 const BottomBar = styled.div`
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   margin-top: 3rem;
-
   color: ${MUTED_TEAL};
-
   font-size: ${(props) => props.theme.fontsm};
 
   @media (max-width: 48em) {
     flex-direction: column;
-
     gap: 1.5rem;
   }
 `;
 
 const Pagination = styled.div`
   display: flex;
-
   gap: 0.4rem;
 `;
 
 const PageButton = styled.button`
   width: 2.5rem;
   height: 2.5rem;
-
   border: 1px solid ${BORDER};
-
   border-radius: 0.6rem;
 
   background: ${(props) =>
-    props.$active
-      ? DARK_TEAL
-      : IVORY};
+    props.$active ? DARK_TEAL : IVORY};
 
   color: ${(props) =>
-    props.$active
-      ? IVORY
-      : DARK_TEAL};
+    props.$active ? IVORY : DARK_TEAL};
 
   cursor: pointer;
-
   font-family: inherit;
-
   transition: 0.2s ease;
 
   &:hover {
@@ -676,11 +467,9 @@ const PageButton = styled.button`
   }
 `;
 
-/* =========================================================
-   COMPONENT
-========================================================= */
-
 const JewelleryCollection = () => {
+  const navigate = useNavigate();
+
   const [category, setCategory] =
     useState("All");
 
@@ -690,12 +479,17 @@ const JewelleryCollection = () => {
   const [sort, setSort] =
     useState("recommended");
 
-  const [wishlist, setWishlist] =
+  const [products, setProducts] =
     useState([]);
 
-  /* =======================================================
-     FILTER OPTIONS
-  ======================================================= */
+  const [loading, setLoading] =
+    useState(true);
+
+  const [error, setError] =
+    useState("");
+
+  const [wishlist, setWishlist] =
+    useState([]);
 
   const categories = [
     "All",
@@ -720,75 +514,125 @@ const JewelleryCollection = () => {
     },
   ];
 
-  /* =======================================================
-     FILTER PRODUCTS
-  ======================================================= */
+  useEffect(() => {
+    const fetchJewellery = async () => {
+      try {
+        setLoading(true);
+        setError("");
 
-  const filteredProducts = useMemo(() => {
-    let result = [...jewelleryProducts];
+        const params =
+          new URLSearchParams();
 
-    /* CATEGORY */
+        params.set(
+          "collection",
+          "jewellery"
+        );
 
-    if (category !== "All") {
-      result = result.filter(
-        (product) =>
-          product.category === category
-      );
-    }
+        if (category !== "All") {
+          params.set(
+            "category",
+            category
+          );
+        }
 
-    /* COLOR */
+        if (selectedColor) {
+          params.set(
+            "color",
+            selectedColor
+          );
+        }
 
-    if (selectedColor) {
-      result = result.filter(
-        (product) =>
-          product.color === selectedColor
-      );
-    }
+        const response = await fetch(
+          `http://localhost:5000/api/products?${params.toString()}`
+        );
 
-    /* SORT */
+        const data =
+          await response.json();
 
-    if (sort === "low") {
-      result.sort(
-        (a, b) => a.price - b.price
-      );
-    }
+        if (
+          !response.ok ||
+          !data.success
+        ) {
+          throw new Error(
+            data.message ||
+              "Failed to fetch jewellery"
+          );
+        }
 
-    if (sort === "high") {
-      result.sort(
-        (a, b) => b.price - a.price
-      );
-    }
+        setProducts(
+          data.products || []
+        );
 
-    if (sort === "rating") {
-      result.sort(
-        (a, b) => b.rating - a.rating
-      );
-    }
+      } catch (err) {
+        console.error(
+          "Jewellery API error:",
+          err
+        );
 
-    return result;
+        setProducts([]);
+
+        setError(
+          "Unable to load jewellery products."
+        );
+
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJewellery();
   }, [
     category,
     selectedColor,
-    sort,
   ]);
 
-  /* =======================================================
-     WISHLIST
-  ======================================================= */
+  const sortedProducts =
+    useMemo(() => {
+      const result = [
+        ...products,
+      ];
+
+      if (sort === "low") {
+        result.sort(
+          (a, b) =>
+            a.price - b.price
+        );
+      }
+
+      if (sort === "high") {
+        result.sort(
+          (a, b) =>
+            b.price - a.price
+        );
+      }
+
+      if (sort === "rating") {
+        result.sort(
+          (a, b) =>
+            b.rating - a.rating
+        );
+      }
+
+      return result;
+    }, [
+      products,
+      sort,
+    ]);
 
   const toggleWishlist = (id) => {
-    setWishlist((previous) =>
-      previous.includes(id)
-        ? previous.filter(
-            (item) => item !== id
-          )
-        : [...previous, id]
+    setWishlist(
+      (previous) =>
+        previous.includes(id)
+          ? previous.filter(
+              (item) =>
+                item !== id
+            )
+          : [
+              ...previous,
+              id,
+            ]
     );
   };
-
-  /* =======================================================
-     CLEAR FILTERS
-  ======================================================= */
 
   const clearFilters = () => {
     setCategory("All");
@@ -799,56 +643,31 @@ const JewelleryCollection = () => {
   return (
     <Page>
 
-      {/* =================================================
-          BREADCRUMB
-      ================================================= */}
-
       <Breadcrumb>
-        <span>
-          Home
-        </span>
-
-        <span>
-          ›
-        </span>
-
-        <span>
-          Collections
-        </span>
-
-        <span>
-          ›
-        </span>
-
+        <span>Home</span>
+        <span>›</span>
+        <span>Collections</span>
+        <span>›</span>
         <span>
           Jewellery Collection
         </span>
       </Breadcrumb>
 
-
-      {/* =================================================
-          HEADER
-      ================================================= */}
-
       <Header>
-
         <div>
-
           <h1>
             Jewellery Collection
           </h1>
 
           <p className="description">
-            Elegant pieces to complete every
-            look, from everyday minimal styles
-            to statement jewellery ✨
+            Elegant pieces to complete
+            every look, from everyday
+            minimal styles to statement
+            jewellery ✨
           </p>
-
         </div>
 
-
         <SortBox>
-
           <span>
             Sort by
           </span>
@@ -861,7 +680,6 @@ const JewelleryCollection = () => {
               )
             }
           >
-
             <option value="recommended">
               Recommended
             </option>
@@ -877,63 +695,46 @@ const JewelleryCollection = () => {
             <option value="rating">
               Highest Rated
             </option>
-
           </select>
-
         </SortBox>
-
       </Header>
 
-
-      {/* =================================================
-          CONTENT
-      ================================================= */}
-
       <Content>
-
-        {/* =================================================
-            FILTER SIDEBAR
-        ================================================= */}
 
         <FilterSidebar>
 
           <FilterHeader>
-
             <h2>
               Filter
             </h2>
 
             <button
-              onClick={clearFilters}
+              type="button"
+              onClick={
+                clearFilters
+              }
             >
               Clear All
             </button>
-
           </FilterHeader>
 
-
-          {/* CATEGORY */}
-
           <FilterGroup>
-
             <h3>
               Category
             </h3>
 
             <RadioList>
-
               {categories.map(
                 (item) => (
-
                   <RadioLabel
                     key={item}
                   >
-
                     <input
                       type="radio"
                       name="jewellery-category"
                       checked={
-                        category === item
+                        category ===
+                        item
                       }
                       onChange={() =>
                         setCategory(
@@ -943,31 +744,21 @@ const JewelleryCollection = () => {
                     />
 
                     {item}
-
                   </RadioLabel>
-
                 )
               )}
-
             </RadioList>
-
           </FilterGroup>
 
-
-          {/* PRICE */}
-
           <FilterGroup>
-
             <h3>
               Price Range
             </h3>
 
             <PriceRange>
-
               <div className="range" />
 
               <div className="values">
-
                 <span>
                   ₹0
                 </span>
@@ -975,32 +766,27 @@ const JewelleryCollection = () => {
                 <span>
                   ₹5000+
                 </span>
-
               </div>
-
             </PriceRange>
-
           </FilterGroup>
 
-
-          {/* COLORS */}
-
           <FilterGroup>
-
             <h3>
               Material / Color
             </h3>
 
             <ColorList>
-
               {colors.map(
                 (color) => (
-
                   <ColorDot
                     key={
                       color.name
                     }
+                    type="button"
                     title={
+                      color.name
+                    }
+                    aria-label={
                       color.name
                     }
                     $color={
@@ -1013,47 +799,82 @@ const JewelleryCollection = () => {
                     onClick={() =>
                       setSelectedColor(
                         selectedColor ===
-                          color.name
+                        color.name
                           ? ""
                           : color.name
                       )
                     }
                   />
-
                 )
               )}
-
             </ColorList>
-
           </FilterGroup>
 
-
-          {/* APPLY */}
-
-          <ApplyButton>
+          <ApplyButton
+            type="button"
+          >
             Apply Filters
           </ApplyButton>
 
         </FilterSidebar>
 
-
-        {/* =================================================
-            PRODUCTS
-        ================================================= */}
-
         <ProductsArea>
 
-          {filteredProducts.length > 0 ? (
+          {loading ? (
+            <EmptyState>
+              <h3>
+                Loading jewellery...
+              </h3>
+
+              <p>
+                Please wait a moment.
+              </p>
+            </EmptyState>
+
+          ) : error ? (
+            <EmptyState>
+              <h3>
+                {error}
+              </h3>
+
+              <p>
+                Please try again.
+              </p>
+            </EmptyState>
+
+          ) : sortedProducts.length >
+            0 ? (
 
             <ProductGrid>
 
-              {filteredProducts.map(
+              {sortedProducts.map(
                 (product) => (
 
                   <ProductCard
                     key={
-                      product.id
+                      product._id
                     }
+                    role="button"
+                    tabIndex={0}
+                    onClick={() =>
+                      navigate(
+                        `/product/${product._id}`
+                      )
+                    }
+                    onKeyDown={(event) => {
+                      if (
+                        event.key ===
+                          "Enter" ||
+                        event.key ===
+                          " "
+                      ) {
+                        event.preventDefault();
+
+                        navigate(
+                          `/product/${product._id}`
+                        );
+                      }
+                    }}
                   >
 
                     <ProductImage>
@@ -1069,24 +890,24 @@ const JewelleryCollection = () => {
                       />
 
                       <Wishlist
-                        onClick={() =>
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+
                           toggleWishlist(
-                            product.id
-                          )
-                        }
+                            product._id
+                          );
+                        }}
                         aria-label="Add to wishlist"
                       >
-
                         {wishlist.includes(
-                          product.id
+                          product._id
                         )
                           ? "♥"
                           : "♡"}
-
                       </Wishlist>
 
                     </ProductImage>
-
 
                     <ProductInfo>
 
@@ -1099,12 +920,10 @@ const JewelleryCollection = () => {
                       <div className="bottom">
 
                         <span className="price">
-
                           ₹
                           {product.price.toLocaleString(
                             "en-IN"
                           )}
-
                         </span>
 
                         <span className="rating">
@@ -1126,7 +945,6 @@ const JewelleryCollection = () => {
                     </ProductInfo>
 
                   </ProductCard>
-
                 )
               )}
 
@@ -1135,66 +953,74 @@ const JewelleryCollection = () => {
           ) : (
 
             <EmptyState>
-
               <h3>
                 No jewellery found
               </h3>
 
               <p>
-                Try changing your filters.
+                Try changing your
+                filters.
               </p>
-
             </EmptyState>
 
           )}
-
-
-          {/* =================================================
-              BOTTOM BAR
-          ================================================= */}
 
           <BottomBar>
 
             <span>
               Showing 1 –{" "}
               {
-                filteredProducts.length
+                sortedProducts.length
               }{" "}
               of{" "}
               {
-                filteredProducts.length
+                sortedProducts.length
               }{" "}
               results
             </span>
 
-
             <Pagination>
 
-              <PageButton>
+              <PageButton
+                type="button"
+              >
                 ←
               </PageButton>
 
-              <PageButton $active>
+              <PageButton
+                type="button"
+                $active
+              >
                 1
               </PageButton>
 
-              <PageButton>
+              <PageButton
+                type="button"
+              >
                 2
               </PageButton>
 
-              <PageButton>
+              <PageButton
+                type="button"
+              >
                 3
               </PageButton>
 
-              <PageButton>
+              <PageButton
+                type="button"
+              >
                 4
               </PageButton>
 
-              <PageButton>
+              <PageButton
+                type="button"
+              >
                 5
               </PageButton>
 
-              <PageButton>
+              <PageButton
+                type="button"
+              >
                 →
               </PageButton>
 
