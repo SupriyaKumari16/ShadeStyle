@@ -2,13 +2,15 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
-
-// StrictMode is intentionally disabled:
-// react-locomotive-scroll@0.2.2 can break with
-// React 18+ double-invoked effects.
+import { WishlistProvider } from './context/WishlistContext';
+import { CartProvider } from './context/CartContext';
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <App />
+    <WishlistProvider>
+      <CartProvider>
+        <App />
+      </CartProvider>
+    </WishlistProvider>
   </BrowserRouter>
 );

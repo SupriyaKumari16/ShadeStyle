@@ -1,14 +1,16 @@
-import { motion } from 'framer-motion';
-import React, { useState } from 'react';
-import { useLocomotiveScroll } from 'react-locomotive-scroll';
-import { Link } from 'react-router-dom';
-import styled from 'styled-components';
+import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { useLocomotiveScroll } from "react-locomotive-scroll";
+import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 
 const NavContainer = styled(motion.div)`
   position: absolute;
 
   top: ${(props) =>
-    props.$click ? '0' : `-${props.theme.navHeight}`};
+    props.$click ? "0" : `-${props.theme.navHeight}`};
 
   transition: all 0.3s ease;
 
@@ -21,9 +23,7 @@ const NavContainer = styled(motion.div)`
 
   @media (max-width: 40em) {
     top: ${(props) =>
-      props.$click
-        ? '0'
-        : `calc(-50vh - 4rem)`};
+      props.$click ? "0" : `calc(-50vh - 4rem)`};
   }
 `;
 
@@ -113,6 +113,9 @@ const Navbar = () => {
 
   const { scroll } = useLocomotiveScroll();
 
+  const { wishlistCount } = useWishlist();
+  const { cartCount } = useCart();
+
   const handleScroll = (id) => {
     const elem = document.querySelector(id);
 
@@ -121,8 +124,8 @@ const Navbar = () => {
     setClick(!click);
 
     scroll.scrollTo(elem, {
-      offset: '-100',
-      duration: '2000',
+      offset: "-100",
+      duration: "2000",
       easing: [0.25, 0.0, 0.35, 1.0],
     });
   };
@@ -130,11 +133,11 @@ const Navbar = () => {
   return (
     <NavContainer
       $click={click}
-      initial={{ y: '-100%' }}
+      initial={{ y: "-100%" }}
       animate={{ y: 0 }}
       transition={{
-        duration: 2,
-        delay: 5,
+        duration: 1,
+        delay: 2,
       }}
     >
       <MenuItems
@@ -146,12 +149,11 @@ const Navbar = () => {
         dragElastic={0.05}
         dragSnapToOrigin
       >
-        <MenuBtn
-          onClick={() => setClick(!click)}
-        >
+        <MenuBtn onClick={() => setClick(!click)}>
           <span>MENU</span>
         </MenuBtn>
 
+        {/* HOME */}
         <Item
           whileHover={{
             scale: 1.1,
@@ -161,11 +163,12 @@ const Navbar = () => {
             scale: 0.9,
             y: 0,
           }}
-          onClick={() => handleScroll('#home')}
+          onClick={() => handleScroll("#home")}
         >
           <Link to="/">Home</Link>
         </Item>
 
+        {/* ABOUT */}
         <Item
           whileHover={{
             scale: 1.1,
@@ -175,11 +178,12 @@ const Navbar = () => {
             scale: 0.9,
             y: 0,
           }}
-          onClick={() => handleScroll('.about')}
+          onClick={() => handleScroll(".about")}
         >
           <Link to="/">About</Link>
         </Item>
 
+        {/* NEW ARRIVAL */}
         <Item
           whileHover={{
             scale: 1.1,
@@ -189,25 +193,51 @@ const Navbar = () => {
             scale: 0.9,
             y: 0,
           }}
-          onClick={() => handleScroll('#shop')}
-        >
-          <Link to="/">Shop</Link>
-        </Item>
-
-        <Item
-          whileHover={{
-            scale: 1.1,
-            y: -5,
-          }}
-          whileTap={{
-            scale: 0.9,
-            y: 0,
-          }}
-          onClick={() =>
-            handleScroll('.new-arrival')
-          }
+          onClick={() => handleScroll(".new-arrival")}
         >
           <Link to="/">New Arrival</Link>
+        </Item>
+
+        {/* WISHLIST */}
+        <Item
+          whileHover={{
+            scale: 1.1,
+            y: -5,
+          }}
+          whileTap={{
+            scale: 0.9,
+            y: 0,
+          }}
+        >
+          <Link to="/wishlist">
+            ♡ Wishlist
+            {wishlistCount > 0 && (
+              <span style={{ marginLeft: "4px" }}>
+                ({wishlistCount})
+              </span>
+            )}
+          </Link>
+        </Item>
+
+        {/* CART */}
+        <Item
+          whileHover={{
+            scale: 1.1,
+            y: -5,
+          }}
+          whileTap={{
+            scale: 0.9,
+            y: 0,
+          }}
+        >
+          <Link to="/cart">
+            🛒 Cart
+            {cartCount > 0 && (
+              <span style={{ marginLeft: "4px" }}>
+                ({cartCount})
+              </span>
+            )}
+          </Link>
         </Item>
       </MenuItems>
     </NavContainer>

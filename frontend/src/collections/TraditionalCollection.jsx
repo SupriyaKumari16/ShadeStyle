@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 const PAGE_BG = "#EAF2EC";
 const IVORY = "#F8F5EC";
 const SOFT_IVORY = "#F4F1E8";
@@ -754,6 +755,24 @@ const StateMessage = styled.div`
   color:
     ${MUTED_TEAL};
 `;
+const CartButton = styled.button`
+  width: 100%;
+  margin-top: 0.8rem;
+  border: none;
+  background: ${DARK_TEAL};
+  color: ${IVORY};
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.6rem;
+  font-family: inherit;
+  font-size: ${(props) => props.theme.fontxs};
+  cursor: pointer;
+  transition: 0.2s ease;
+  &:hover {
+    transform: translateY(-2px);
+    opacity: 0.9;
+  }
+`;
+
 const EmptyState = styled.div`
   min-height: 20rem;
   display: flex;
@@ -833,6 +852,7 @@ const PageButton = styled.button`
 `;
 const TraditionalCollection = () => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [searchParams] =
     useSearchParams();
   const skinTone =
@@ -1367,7 +1387,24 @@ const TraditionalCollection = () => {
                             }
                           </span>
                         </div>
-                      </ProductInfo>
+                      
+                        <CartButton
+  type="button"
+  onClick={(event) => {
+    event.stopPropagation();
+
+    addToCart(
+      product,
+      1,
+      product.sizes?.[0] || ""
+    );
+
+    alert("Product added to cart!");
+  }}
+>
+  🛒 Add to Cart
+</CartButton>
+</ProductInfo>
                     </ProductCard>
                   )
                 )}

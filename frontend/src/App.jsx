@@ -3,13 +3,7 @@ import "locomotive-scroll/dist/locomotive-scroll.css";
 import { AnimatePresence } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { LocomotiveScrollProvider } from "react-locomotive-scroll";
-
-import {
-  Navigate,
-  Route,
-  Routes,
-} from "react-router-dom";
-
+import { Navigate, Route, Routes } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 
 import Loader from "./components/Loader";
@@ -30,117 +24,58 @@ import JewelleryCollection from "./collections/JewelleryCollection";
 
 import ProductDetail from "./pages/ProductDetail";
 import Wishlist from "./pages/Wishlist";
-
-import { WishlistProvider } from "./context/WishlistContext";
+import Cart from "./pages/Cart";
+import Checkout from "./pages/Checkout";
 
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark } from "./styles/Themes";
 
-
-/* =====================================================
-   MAIN WEBSITE
-   Locomotive Scroll is used ONLY here
-===================================================== */
-
 function MainWebsite() {
   const containerRef = useRef(null);
-
   const [Loaded, setLoaded] = useState(false);
-
-
-  /* =====================================================
-     LOADER
-  ===================================================== */
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoaded(true);
     }, 3000);
 
-    return () => {
-      clearTimeout(timer);
-    };
+    return () => clearTimeout(timer);
   }, []);
-
 
   return (
     <LocomotiveScrollProvider
       options={{
         smooth: true,
-
-        smartphone: {
-          smooth: true,
-        },
-
-        tablet: {
-          smooth: true,
-        },
+        smartphone: { smooth: true },
+        tablet: { smooth: true },
       }}
       watch={[]}
       containerRef={containerRef}
     >
-
-      {/* =================================================
-          LOADER
-      ================================================= */}
-
       <AnimatePresence mode="wait">
         {!Loaded && <Loader />}
       </AnimatePresence>
-
-
-      {/* =================================================
-          MAIN SCROLL CONTAINER
-      ================================================= */}
 
       <main
         className="App"
         data-scroll-container
         ref={containerRef}
       >
-
-        <ScrollTriggerProxy />
-
-
         {Loaded && (
           <>
-
-            {/* HOME */}
+            <ScrollTriggerProxy />
             <Home />
-
-
-            {/* ABOUT */}
             <About />
-
-
-            {/* COLOR TONE */}
             <ColorTone />
-
-
-            {/* MARQUEE */}
             <Marquee />
-
-
-            {/* NEW ARRIVALS */}
             <NewArrival />
-
-
-            {/* FOOTER */}
             <Footer />
-
           </>
         )}
-
       </main>
-
     </LocomotiveScrollProvider>
   );
 }
-
-
-/* =====================================================
-   APP
-===================================================== */
 
 function App() {
   return (
@@ -148,103 +83,60 @@ function App() {
       <GlobalStyles />
 
       <ThemeProvider theme={dark}>
+        <Routes>
+          <Route
+            path="/"
+            element={<MainWebsite />}
+          />
 
-        <WishlistProvider>
+          <Route
+            path="/best-colors/:tone"
+            element={<YourBestColors />}
+          />
 
-          <Routes>
+          <Route
+            path="/collection/trendy"
+            element={<TrendyCollection />}
+          />
 
-            {/* =================================================
-                MAIN WEBSITE
-            ================================================= */}
+          <Route
+            path="/collection/traditional"
+            element={<TraditionalCollection />}
+          />
 
-            <Route
-              path="/"
-              element={<MainWebsite />}
-            />
+          <Route
+            path="/collection/jewellery"
+            element={<JewelleryCollection />}
+          />
 
+          <Route
+            path="/product/:id"
+            element={<ProductDetail />}
+          />
 
-            {/* =================================================
-                YOUR BEST COLORS
-            ================================================= */}
+          <Route
+            path="/wishlist"
+            element={<Wishlist />}
+          />
 
-            <Route
-              path="/best-colors/:tone"
-              element={<YourBestColors />}
-            />
+          <Route
+            path="/cart"
+            element={<Cart />}
+          />
 
+          <Route
+            path="/checkout"
+            element={<Checkout />}
+          />
 
-            {/* =================================================
-                TRENDY COLLECTION
-            ================================================= */}
-
-            <Route
-              path="/collection/trendy"
-              element={<TrendyCollection />}
-            />
-
-
-            {/* =================================================
-                TRADITIONAL COLLECTION
-            ================================================= */}
-
-            <Route
-              path="/collection/traditional"
-              element={<TraditionalCollection />}
-            />
-
-
-            {/* =================================================
-                JEWELLERY COLLECTION
-            ================================================= */}
-
-            <Route
-              path="/collection/jewellery"
-              element={<JewelleryCollection />}
-            />
-
-
-            {/* =================================================
-                PRODUCT DETAIL
-            ================================================= */}
-
-            <Route
-              path="/product/:id"
-              element={<ProductDetail />}
-            />
-
-
-            {/* =================================================
-                WISHLIST
-            ================================================= */}
-
-            <Route
-              path="/wishlist"
-              element={<Wishlist />}
-            />
-
-
-            {/* =================================================
-                INVALID URL
-            ================================================= */}
-
-            <Route
-              path="*"
-              element={
-                <Navigate
-                  to="/"
-                  replace
-                />
-              }
-            />
-
-          </Routes>
-
-        </WishlistProvider>
-
+          <Route
+            path="*"
+            element={<Navigate to="/" replace />}
+          />
+        </Routes>
       </ThemeProvider>
     </>
   );
 }
-
 
 export default App;

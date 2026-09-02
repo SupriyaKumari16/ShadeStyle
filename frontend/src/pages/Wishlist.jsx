@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useWishlist } from "../context/WishlistContext";
 
 const BG = "#EAF2EC";
 const IVORY = "#F8F5EC";
@@ -290,51 +291,7 @@ const EmptyCard = styled.div`
 
 const Wishlist = () => {
   const navigate = useNavigate();
-
-  // UI-only sample products for now.
-  // Cart/wishlist functionality will be connected in the next step.
-  const wishlistProducts = [
-    {
-      id: "sample-1",
-      name: "Lavender Anarkali",
-      price: 1899,
-      mrp: 2499,
-      discount: 24,
-      rating: 4.7,
-      reviews: 128,
-      image: "/images/products/traditional/lavender-anarkali.jpg",
-    },
-    {
-      id: "sample-2",
-      name: "Ivory Co-ord Set",
-      price: 1399,
-      mrp: 1999,
-      discount: 30,
-      rating: 4.6,
-      reviews: 94,
-      image: "/images/products/trendy/ivory-coord-set.jpg",
-    },
-    {
-      id: "sample-3",
-      name: "Gold Layered Necklace",
-      price: 1299,
-      mrp: 1799,
-      discount: 28,
-      rating: 4.8,
-      reviews: 156,
-      image: "/images/products/jewellery/gold-layered-necklace.jpg",
-    },
-    {
-      id: "sample-4",
-      name: "Peach Ethnic Set",
-      price: 1699,
-      mrp: 2299,
-      discount: 26,
-      rating: 4.6,
-      reviews: 87,
-      image: "/images/products/traditional/peach-ethnic-set.jpg",
-    },
-  ];
+  const { wishlist, removeFromWishlist } = useWishlist();
 
   return (
     <Page>
@@ -350,55 +307,58 @@ const Wishlist = () => {
             <h1>My Wishlist ♡</h1>
             <p>Save your favourite styles for later.</p>
           </div>
-          <CountBadge>{wishlistProducts.length} Items</CountBadge>
+          <CountBadge>{wishlist.length} Items</CountBadge>
         </Header>
 
-        {wishlistProducts.length > 0 ? (
+        {wishlist.length > 0 ? (
           <WishlistGrid>
-            {wishlistProducts.map((product) => (
-              <ProductCard key={product.id}>
-                <ImageWrapper>
-                  <img src={product.image} alt={product.name} />
-                  <RemoveButton
-                    type="button"
-                    aria-label={`Remove ${product.name} from wishlist`}
-                  >
-                    ♥
-                  </RemoveButton>
-                </ImageWrapper>
+            {wishlist.map((product) => {
+              const productId = product._id || product.id;
+              const price = Number(product.price) || 0;
+              const mrp = Number(product.mrp) || 0;
+              const discount = product.discount || (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
 
-                <ProductInfo>
-                  <ProductName>{product.name}</ProductName>
+              return (
+                <ProductCard key={productId}>
+                  <ImageWrapper>
+                    <img src={product.image} alt={product.name} />
+                    <RemoveButton
+                      type="button"
+                      aria-label={`Remove ${product.name} from wishlist`}
+                      onClick={() => removeFromWishlist(productId)}
+                    >
+                      ♥
+                    </RemoveButton>
+                  </ImageWrapper>
 
-                  <RatingRow>
-                    <Rating>{product.rating} ★</Rating>
-                    <Reviews>{product.reviews} Ratings</Reviews>
-                  </RatingRow>
+                  <ProductInfo>
+                    <ProductName>{product.name}</ProductName>
 
-                  <PriceRow>
-                    <Price>₹{product.price.toLocaleString("en-IN")}</Price>
-                    <MRP>₹{product.mrp.toLocaleString("en-IN")}</MRP>
-                    <Discount>{product.discount}% off</Discount>
-                  </PriceRow>
+                    <RatingRow>
+                      <Rating>{product.rating || 0} ★</Rating>
+                      <Reviews>{product.reviews || 0} Ratings</Reviews>
+                    </RatingRow>
 
-                  <AddToCartButton
-                    type="button"
-                    onClick={() => navigate(`/product/${product.id}`)}
-                  >
-                    🛒 Add to Cart
-                  </AddToCartButton>
-                </ProductInfo>
-              </ProductCard>
-            ))}
+                    <PriceRow>
+                      <Price>₹{price.toLocaleString("en-IN")}</Price>
+                      {mrp > price && <MRP>₹{mrp.toLocaleString("en-IN")}</MRP>}
+                      {discount > 0 && <Discount>{discount}% off</Discount>}
+                    </PriceRow>
+
+                    <AddToCartButton type="button" onClick={() => navigate(`/product/${productId}`)}>
+                      🛒 Add to Cart
+                    </AddToCartButton>
+                  </ProductInfo>
+                </ProductCard>
+              );
+            })}
           </WishlistGrid>
         ) : (
           <EmptyState>
             <EmptyCard>
               <div className="heart">♡</div>
               <h2>Your wishlist is empty</h2>
-              <p>
-                Save products you love and come back to them whenever you want.
-              </p>
+              <p>Save products you love and come back to them whenever you want.</p>
             </EmptyCard>
           </EmptyState>
         )}
