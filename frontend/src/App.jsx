@@ -26,6 +26,9 @@ import ProductDetail from "./pages/ProductDetail";
 import Wishlist from "./pages/Wishlist";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
+import Payment from "./pages/Payment";
+import OrderSuccess from "./pages/OrderSuccess";
+import AuthPage from "./auth/Auth";
 
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark } from "./styles/Themes";
@@ -78,6 +81,7 @@ function MainWebsite() {
 }
 
 function App() {
+   const [showAuth, setShowAuth] = useState(false);
   return (
     <>
       <GlobalStyles />
@@ -128,6 +132,24 @@ function App() {
             path="/checkout"
             element={<Checkout />}
           />
+          <Route
+  path="/payment"
+  element={<Payment />}
+/>
+
+<Route
+  path="/order-success"
+  element={<OrderSuccess />}
+/>
+<Route
+  path="/auth"
+  element={
+    <AuthPage
+      showAuth={true}
+      setShowAuth={setShowAuth}
+    />
+  }
+/>
 
           <Route
             path="*"

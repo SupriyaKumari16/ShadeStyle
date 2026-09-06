@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
 import styled from "styled-components";
@@ -681,6 +681,7 @@ const StateMessage = styled.div`
 
 const ProductDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -1040,9 +1041,20 @@ const ProductDetail = () => {
               🛒 Add to Cart
             </AddToCart>
 
-            <BuyNow type="button">
-              Buy Now
-            </BuyNow>
+            <BuyNow
+  type="button"
+  onClick={() => {
+    if (product.sizes?.length > 0 && !selectedSize) {
+      alert("Please select a size first.");
+      return;
+    }
+
+    addToCart(product, quantity, selectedSize || "");
+    navigate("/payment");
+  }}
+>
+  Buy Now
+</BuyNow>
           </ActionButtons>
 
           <DeliveryBox>

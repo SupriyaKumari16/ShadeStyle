@@ -359,9 +359,11 @@ const Cart = () => {
 
             {cart.map((item) => {
               const productId = item._id || item.id;
+
               const itemMRP = Number(
                 item.mrp || item.price || 0
               );
+
               const itemPrice = Number(item.price || 0);
 
               return (
@@ -506,9 +508,7 @@ const Cart = () => {
 
               <PlaceOrder
                 type="button"
-                onClick={() =>
-                  alert("Checkout coming soon!")
-                }
+                onClick={() => navigate("/checkout")}
               >
                 PLACE ORDER
               </PlaceOrder>

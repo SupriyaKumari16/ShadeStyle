@@ -1,7 +1,7 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { useWishlist } from "../context/WishlistContext";
+import { useCart } from "../context/CartContext";
 
 const BG = "#EAF2EC";
 const IVORY = "#F8F5EC";
@@ -224,6 +224,25 @@ const Discount = styled.span`
   font-weight: 600;
 `;
 
+const SizeSelect = styled.select`
+  width: 100%;
+  height: 42px;
+  margin-bottom: 0.7rem;
+  padding: 0 0.75rem;
+  border: 1px solid ${BORDER};
+  border-radius: 0.5rem;
+  background: ${WHITE};
+  color: ${TEAL};
+  font-family: inherit;
+  font-size: 0.78rem;
+  outline: none;
+  cursor: pointer;
+
+  &:focus {
+    border-color: ${PEACH};
+  }
+`;
+
 const AddToCartButton = styled.button`
   width: 100%;
   height: 44px;
@@ -290,8 +309,10 @@ const EmptyCard = styled.div`
 `;
 
 const Wishlist = () => {
-  const navigate = useNavigate();
   const { wishlist, removeFromWishlist } = useWishlist();
+  const { addToCart } = useCart();
+
+  const [selectedSizes, setSelectedSizes] = useState({});
 
   return (
     <Page>
@@ -307,6 +328,7 @@ const Wishlist = () => {
             <h1>My Wishlist ♡</h1>
             <p>Save your favourite styles for later.</p>
           </div>
+
           <CountBadge>{wishlist.length} Items</CountBadge>
         </Header>
 
@@ -316,12 +338,33 @@ const Wishlist = () => {
               const productId = product._id || product.id;
               const price = Number(product.price) || 0;
               const mrp = Number(product.mrp) || 0;
-              const discount = product.discount || (mrp > price ? Math.round(((mrp - price) / mrp) * 100) : 0);
+
+              const discount =
+                product.discount ||
+                (mrp > price
+                  ? Math.round(((mrp - price) / mrp) * 100)
+                  : 0);
+
+              const hasSizes =
+                Array.isArray(product.sizes) && product.sizes.length > 0;
+
+              const selectedSize = selectedSizes[productId] || "";
+
+              const handleAddToCart = () => {
+                if (hasSizes && !selectedSize) {
+                  alert("Please select a size first.");
+                  return;
+                }
+
+                addToCart(product, 1, selectedSize);
+                removeFromWishlist(productId);
+              };
 
               return (
                 <ProductCard key={productId}>
                   <ImageWrapper>
                     <img src={product.image} alt={product.name} />
+
                     <RemoveButton
                       type="button"
                       aria-label={`Remove ${product.name} from wishlist`}
@@ -336,16 +379,49 @@ const Wishlist = () => {
 
                     <RatingRow>
                       <Rating>{product.rating || 0} ★</Rating>
-                      <Reviews>{product.reviews || 0} Ratings</Reviews>
+                      <Reviews>
+                        {product.reviews || 0} Ratings
+                      </Reviews>
                     </RatingRow>
 
                     <PriceRow>
-                      <Price>₹{price.toLocaleString("en-IN")}</Price>
-                      {mrp > price && <MRP>₹{mrp.toLocaleString("en-IN")}</MRP>}
-                      {discount > 0 && <Discount>{discount}% off</Discount>}
+                      <Price>
+                        ₹{price.toLocaleString("en-IN")}
+                      </Price>
+
+                      {mrp > price && (
+                        <MRP>₹{mrp.toLocaleString("en-IN")}</MRP>
+                      )}
+
+                      {discount > 0 && (
+                        <Discount>{discount}% off</Discount>
+                      )}
                     </PriceRow>
 
-                    <AddToCartButton type="button" onClick={() => navigate(`/product/${productId}`)}>
+                    {hasSizes && (
+                      <SizeSelect
+                        value={selectedSize}
+                        onChange={(event) =>
+                          setSelectedSizes((previous) => ({
+                            ...previous,
+                            [productId]: event.target.value,
+                          }))
+                        }
+                      >
+                        <option value="">Select Size</option>
+
+                        {product.sizes.map((size) => (
+                          <option key={size} value={size}>
+                            Size {size}
+                          </option>
+                        ))}
+                      </SizeSelect>
+                    )}
+
+                    <AddToCartButton
+                      type="button"
+                      onClick={handleAddToCart}
+                    >
                       🛒 Add to Cart
                     </AddToCartButton>
                   </ProductInfo>
@@ -358,7 +434,10 @@ const Wishlist = () => {
             <EmptyCard>
               <div className="heart">♡</div>
               <h2>Your wishlist is empty</h2>
-              <p>Save products you love and come back to them whenever you want.</p>
+              <p>
+                Save products you love and come back to them whenever you
+                want.
+              </p>
             </EmptyCard>
           </EmptyState>
         )}
