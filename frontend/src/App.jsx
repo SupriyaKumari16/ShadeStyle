@@ -28,6 +28,7 @@ import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import OrderSuccess from "./pages/OrderSuccess";
+
 import AuthPage from "./auth/Auth";
 
 import GlobalStyles from "./styles/GlobalStyles";
@@ -35,6 +36,7 @@ import { dark } from "./styles/Themes";
 
 function MainWebsite() {
   const containerRef = useRef(null);
+
   const [Loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -49,8 +51,14 @@ function MainWebsite() {
     <LocomotiveScrollProvider
       options={{
         smooth: true,
-        smartphone: { smooth: true },
-        tablet: { smooth: true },
+
+        smartphone: {
+          smooth: true,
+        },
+
+        tablet: {
+          smooth: true,
+        },
       }}
       watch={[]}
       containerRef={containerRef}
@@ -67,11 +75,17 @@ function MainWebsite() {
         {Loaded && (
           <>
             <ScrollTriggerProxy />
+
             <Home />
+
             <About />
+
             <ColorTone />
+
             <Marquee />
+
             <NewArrival />
+
             <Footer />
           </>
         )}
@@ -81,42 +95,64 @@ function MainWebsite() {
 }
 
 function App() {
-   const [showAuth, setShowAuth] = useState(false);
   return (
     <>
       <GlobalStyles />
 
       <ThemeProvider theme={dark}>
         <Routes>
+
+          {/* ================= HOME ================= */}
+
           <Route
             path="/"
             element={<MainWebsite />}
           />
 
+          {/* ================= AUTH ================= */}
+
           <Route
-            path="/best-colors/:tone"
+            path="/auth"
+            element={
+              <AuthPage
+                showAuth={true}
+                setShowAuth={() => {}}
+              />
+            }
+          />
+
+          {/* ================= SHADES ================= */}
+
+          <Route
+            path="/your-best-colors"
             element={<YourBestColors />}
           />
 
+          {/* ================= COLLECTIONS ================= */}
+
           <Route
-            path="/collection/trendy"
+            path="/collections/trendy"
             element={<TrendyCollection />}
           />
 
           <Route
-            path="/collection/traditional"
+            path="/collections/traditional"
             element={<TraditionalCollection />}
           />
 
           <Route
-            path="/collection/jewellery"
+            path="/collections/jewellery"
             element={<JewelleryCollection />}
           />
+
+          {/* ================= PRODUCTS ================= */}
 
           <Route
             path="/product/:id"
             element={<ProductDetail />}
           />
+
+          {/* ================= SHOPPING ================= */}
 
           <Route
             path="/wishlist"
@@ -132,29 +168,24 @@ function App() {
             path="/checkout"
             element={<Checkout />}
           />
-          <Route
-  path="/payment"
-  element={<Payment />}
-/>
 
-<Route
-  path="/order-success"
-  element={<OrderSuccess />}
-/>
-<Route
-  path="/auth"
-  element={
-    <AuthPage
-      showAuth={true}
-      setShowAuth={setShowAuth}
-    />
-  }
-/>
+          <Route
+            path="/payment"
+            element={<Payment />}
+          />
+
+          <Route
+            path="/order-success"
+            element={<OrderSuccess />}
+          />
+
+          {/* ================= INVALID ================= */}
 
           <Route
             path="*"
             element={<Navigate to="/" replace />}
           />
+
         </Routes>
       </ThemeProvider>
     </>

@@ -3,9 +3,9 @@ import React, { useState } from "react";
 import { useLocomotiveScroll } from "react-locomotive-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
-import Auth from "../auth/Auth";
 
 // ================= NAV CONTAINER =================
 
@@ -26,7 +26,7 @@ const NavContainer = styled(motion.div)`
 
   @media (max-width: 40em) {
     top: ${(props) =>
-      props.$click ? "0" : `calc(-50vh - 4rem)`};
+      props.$click ? "0" : "calc(-50vh - 4rem)"};
   }
 `;
 
@@ -115,7 +115,6 @@ const Item = styled(motion.li)`
 
   @media (max-width: 40em) {
     flex-direction: column;
-
     padding: 0.5rem 0;
   }
 `;
@@ -171,13 +170,16 @@ const IconText = styled.span`
 
 const ProfileDropdown = styled(motion.div)`
   position: absolute;
+
   top: 52px;
   right: -25px;
 
   width: 165px;
+
   padding: 10px 0;
 
   background: rgba(255, 255, 255, 0.25);
+
   backdrop-filter: blur(15px) saturate(180%);
   -webkit-backdrop-filter: blur(15px) saturate(180%);
 
@@ -213,7 +215,7 @@ const LogoutItem = styled(DropdownItem)`
   font-weight: bold;
 `;
 
-// ================= SEARCH OVERLAY =================
+// ================= SEARCH =================
 
 const SearchOverlay = styled(motion.div)`
   position: fixed;
@@ -229,6 +231,7 @@ const SearchOverlay = styled(motion.div)`
 
 const SearchStrip = styled(motion.div)`
   position: fixed;
+
   top: 0;
   left: 0;
 
@@ -239,6 +242,7 @@ const SearchStrip = styled(motion.div)`
 
   display: flex;
   align-items: center;
+
   gap: 18px;
 
   background: rgba(255, 255, 255, 0.25);
@@ -317,13 +321,14 @@ const Navbar = () => {
   const [searchText, setSearchText] = useState("");
 
   const [openProfile, setOpenProfile] = useState(false);
-  const [showAuth, setShowAuth] = useState(false);
 
   const { scroll } = useLocomotiveScroll();
   const navigate = useNavigate();
 
   const { wishlistCount } = useWishlist();
   const { cartCount } = useCart();
+
+  // ================= SCROLL =================
 
   const handleScroll = (id) => {
     const elem = document.querySelector(id);
@@ -339,32 +344,51 @@ const Navbar = () => {
     });
   };
 
+  // ================= PROFILE =================
+
   const handleProfileItem = (item) => {
-  if (item === "Login / Signup") {
+    if (item === "Login / Signup") {
+      setOpenProfile(false);
+
+      // IMPORTANT
+      navigate("/auth");
+
+      return;
+    }
+
+    if (item === "My Account") {
+      setOpenProfile(false);
+      navigate("/account");
+
+      return;
+    }
+
+    if (item === "My Orders") {
+      setOpenProfile(false);
+      navigate("/orders");
+
+      return;
+    }
+
+    if (item === "Notifications") {
+      setOpenProfile(false);
+      navigate("/notifications");
+
+      return;
+    }
+
+    if (item === "Logout") {
+      localStorage.removeItem("loggedIn");
+
+      alert("Logged out!");
+
+      setOpenProfile(false);
+
+      return;
+    }
+
     setOpenProfile(false);
-    setShowAuth(true);
-    return;
-  }
-
-  if (item === "My Account") {
-    navigate("/account");
-  }
-
-  if (item === "My Orders") {
-    navigate("/orders");
-  }
-
-  if (item === "Notifications") {
-    navigate("/notifications");
-  }
-
-  if (item === "Logout") {
-    localStorage.removeItem("loggedIn");
-    alert("Logged out!");
-  }
-
-  setOpenProfile(false);
-};
+  };
 
   return (
     <>
@@ -391,6 +415,7 @@ const Navbar = () => {
           </MenuBtn>
 
           {/* HOME */}
+
           <Item
             whileHover={{
               scale: 1.1,
@@ -406,6 +431,7 @@ const Navbar = () => {
           </Item>
 
           {/* ABOUT */}
+
           <Item
             whileHover={{
               scale: 1.1,
@@ -421,6 +447,7 @@ const Navbar = () => {
           </Item>
 
           {/* NEW ARRIVAL */}
+
           <Item
             whileHover={{
               scale: 1.1,
@@ -436,6 +463,7 @@ const Navbar = () => {
           </Item>
 
           {/* WISHLIST */}
+
           <Item
             whileHover={{
               scale: 1.1,
@@ -448,6 +476,7 @@ const Navbar = () => {
           >
             <Link to="/wishlist">
               ♡ Wishlist
+
               {wishlistCount > 0 && (
                 <span style={{ marginLeft: "4px" }}>
                   ({wishlistCount})
@@ -457,6 +486,7 @@ const Navbar = () => {
           </Item>
 
           {/* CART */}
+
           <Item
             whileHover={{
               scale: 1.1,
@@ -469,6 +499,7 @@ const Navbar = () => {
           >
             <Link to="/cart">
               🛒 Cart
+
               {cartCount > 0 && (
                 <span style={{ marginLeft: "4px" }}>
                   ({cartCount})
@@ -477,10 +508,15 @@ const Navbar = () => {
             </Link>
           </Item>
 
-          {/* SEARCH AND PROFILE */}
+          {/* SEARCH + PROFILE */}
+
           <ExtraItems>
+
             {/* SEARCH */}
-            <IconWrapper onClick={() => setOpenSearch(true)}>
+
+            <IconWrapper
+              onClick={() => setOpenSearch(true)}
+            >
               <SearchIcon
                 whileHover={{
                   scale: 1.15,
@@ -500,8 +536,11 @@ const Navbar = () => {
             </IconWrapper>
 
             {/* PROFILE */}
+
             <IconWrapper
-              onClick={() => setOpenProfile((prev) => !prev)}
+              onClick={() =>
+                setOpenProfile((prev) => !prev)
+              }
               onMouseEnter={() => setOpenProfile(true)}
               onMouseLeave={() => setOpenProfile(false)}
             >
@@ -547,7 +586,9 @@ const Navbar = () => {
                   >
                     <DropdownItem
                       onClick={() =>
-                        handleProfileItem("Login / Signup")
+                        handleProfileItem(
+                          "Login / Signup"
+                        )
                       }
                     >
                       Login / Signup
@@ -578,20 +619,22 @@ const Navbar = () => {
                     </DropdownItem>
 
                     <LogoutItem
-                      onClick={() => handleProfileItem("Logout")}
+                      onClick={() =>
+                        handleProfileItem("Logout")
+                      }
                     >
                       Logout
                     </LogoutItem>
                   </ProfileDropdown>
                 )}
-                
               </AnimatePresence>
             </IconWrapper>
           </ExtraItems>
         </MenuItems>
       </NavContainer>
 
-      {/* SEARCH OVERLAY */}
+      {/* ================= SEARCH ================= */}
+
       <AnimatePresence>
         {openSearch && (
           <SearchOverlay
@@ -609,17 +652,22 @@ const Navbar = () => {
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <SearchStripIcon>⌕</SearchStripIcon>
+              <SearchStripIcon>
+                ⌕
+              </SearchStripIcon>
 
               <SearchInput
                 autoFocus
                 type="text"
                 placeholder="Search products..."
                 value={searchText}
-                onChange={(e) => setSearchText(e.target.value)}
+                onChange={(e) =>
+                  setSearchText(e.target.value)
+                }
               />
 
               <CloseButton
+                type="button"
                 onClick={() => {
                   setOpenSearch(false);
                   setSearchText("");
@@ -631,10 +679,6 @@ const Navbar = () => {
           </SearchOverlay>
         )}
       </AnimatePresence>
-      <Auth
-  showAuth={showAuth}
-  setShowAuth={setShowAuth}
-/>
     </>
   );
 };
