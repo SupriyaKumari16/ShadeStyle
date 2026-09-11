@@ -29,10 +29,23 @@ import Checkout from "./pages/Checkout";
 import Payment from "./pages/Payment";
 import OrderSuccess from "./pages/OrderSuccess";
 
+// ================= PROFILE / ACCOUNT =================
+
+import MyAccount from "./profile/MyAccount";
+import AccountDetails from "./profile/AccountDetails";
+import AddressPage from "./profile/AddressPage";
+
+// ================= AUTH =================
+
 import AuthPage from "./auth/Auth";
 
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark } from "./styles/Themes";
+
+
+// ======================================================
+// MAIN WEBSITE
+// ======================================================
 
 function MainWebsite() {
   const containerRef = useRef(null);
@@ -94,6 +107,11 @@ function MainWebsite() {
   );
 }
 
+
+// ======================================================
+// APP
+// ======================================================
+
 function App() {
   return (
     <>
@@ -102,14 +120,19 @@ function App() {
       <ThemeProvider theme={dark}>
         <Routes>
 
-          {/* ================= HOME ================= */}
+          {/* ==================================================
+              HOME
+          ================================================== */}
 
           <Route
             path="/"
             element={<MainWebsite />}
           />
 
-          {/* ================= AUTH ================= */}
+
+          {/* ==================================================
+              AUTH
+          ================================================== */}
 
           <Route
             path="/auth"
@@ -121,14 +144,20 @@ function App() {
             }
           />
 
-          {/* ================= SHADES ================= */}
+
+          {/* ==================================================
+              SHADES
+          ================================================== */}
 
           <Route
             path="/your-best-colors"
             element={<YourBestColors />}
           />
 
-          {/* ================= COLLECTIONS ================= */}
+
+          {/* ==================================================
+              COLLECTIONS
+          ================================================== */}
 
           <Route
             path="/collections/trendy"
@@ -145,14 +174,20 @@ function App() {
             element={<JewelleryCollection />}
           />
 
-          {/* ================= PRODUCTS ================= */}
+
+          {/* ==================================================
+              PRODUCTS
+          ================================================== */}
 
           <Route
             path="/product/:id"
             element={<ProductDetail />}
           />
 
-          {/* ================= SHOPPING ================= */}
+
+          {/* ==================================================
+              SHOPPING
+          ================================================== */}
 
           <Route
             path="/wishlist"
@@ -179,7 +214,30 @@ function App() {
             element={<OrderSuccess />}
           />
 
-          {/* ================= INVALID ================= */}
+
+          {/* ==================================================
+              ACCOUNT
+          ================================================== */}
+
+          <Route
+            path="/account"
+            element={<MyAccount />}
+          />
+
+          <Route
+            path="/account/details"
+            element={<AccountDetails />}
+          />
+
+          <Route
+            path="/account/addresses"
+            element={<AddressPage />}
+          />
+
+
+          {/* ==================================================
+              INVALID ROUTE
+          ================================================== */}
 
           <Route
             path="*"

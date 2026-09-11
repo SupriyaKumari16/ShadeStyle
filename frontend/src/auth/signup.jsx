@@ -6,8 +6,7 @@ import signupImage from "../assets/signup/simple.png";
 
 const Signup = ({ onSwitch }) => {
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] =
-    useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -17,12 +16,10 @@ const Signup = ({ onSwitch }) => {
 
   return (
     <Page>
-
       {/* ================= FORM ================= */}
 
       <FormSection>
         <FormWrapper>
-
           <Logo
             initial={{
               opacity: 0,
@@ -75,7 +72,6 @@ const Signup = ({ onSwitch }) => {
           </Subtitle>
 
           <Form onSubmit={handleSubmit}>
-
             <InputGroup>
               <Label>Full Name</Label>
 
@@ -112,7 +108,6 @@ const Signup = ({ onSwitch }) => {
               <Label>Password</Label>
 
               <PasswordWrapper>
-
                 <Input
                   whileFocus={{
                     scale: 1.02,
@@ -120,38 +115,24 @@ const Signup = ({ onSwitch }) => {
                   transition={{
                     duration: 0.2,
                   }}
-                  type={
-                    showPassword
-                      ? "text"
-                      : "password"
-                  }
+                  type={showPassword ? "text" : "password"}
                   placeholder="Create a password"
                   required
                 />
 
                 <ShowButton
                   type="button"
-                  onClick={() =>
-                    setShowPassword(
-                      !showPassword
-                    )
-                  }
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  {showPassword
-                    ? "Hide"
-                    : "Show"}
+                  {showPassword ? "Hide" : "Show"}
                 </ShowButton>
-
               </PasswordWrapper>
             </InputGroup>
 
             <InputGroup>
-              <Label>
-                Confirm Password
-              </Label>
+              <Label>Confirm Password</Label>
 
               <PasswordWrapper>
-
                 <Input
                   whileFocus={{
                     scale: 1.02,
@@ -159,11 +140,7 @@ const Signup = ({ onSwitch }) => {
                   transition={{
                     duration: 0.2,
                   }}
-                  type={
-                    showConfirmPassword
-                      ? "text"
-                      : "password"
-                  }
+                  type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm your password"
                   required
                 />
@@ -171,16 +148,11 @@ const Signup = ({ onSwitch }) => {
                 <ShowButton
                   type="button"
                   onClick={() =>
-                    setShowConfirmPassword(
-                      !showConfirmPassword
-                    )
+                    setShowConfirmPassword(!showConfirmPassword)
                   }
                 >
-                  {showConfirmPassword
-                    ? "Hide"
-                    : "Show"}
+                  {showConfirmPassword ? "Hide" : "Show"}
                 </ShowButton>
-
               </PasswordWrapper>
             </InputGroup>
 
@@ -195,26 +167,20 @@ const Signup = ({ onSwitch }) => {
               }}
             >
               Create Account
-
               <Arrow>→</Arrow>
             </SubmitButton>
-
           </Form>
 
           <SwitchText>
             Already have an account?{" "}
-            <SwitchButton onClick={onSwitch}>
-              Login
-            </SwitchButton>
+            <SwitchButton onClick={onSwitch}>Login</SwitchButton>
           </SwitchText>
-
         </FormWrapper>
       </FormSection>
 
       {/* ================= IMAGE ================= */}
 
       <ImageSection>
-
         <Image
           src={signupImage}
           alt="ShadeStyle fashion"
@@ -249,9 +215,7 @@ const Signup = ({ onSwitch }) => {
             ease: "easeOut",
           }}
         >
-          <SmallText>
-            FIND YOUR STYLE
-          </SmallText>
+          <SmallText>FIND YOUR STYLE</SmallText>
 
           <ImageTitle>
             Dress the
@@ -263,29 +227,53 @@ const Signup = ({ onSwitch }) => {
             Create an account and explore your style.
           </ImageDescription>
         </ImageContent>
-
       </ImageSection>
-
     </Page>
   );
 };
 
 export default Signup;
 
-// ================= STYLES =================
+// =====================================================
+// PAGE
+// =====================================================
 
 const Page = styled.div`
   display: flex;
 
   width: 100%;
+
   height: 100%;
 
-  @media (max-width: 768px) {
+  /* =====================================================
+     TABLET — 768px TO 1024px
+     KEEP SIDE-BY-SIDE
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    flex-direction: row;
+
+    height: 100%;
+  }
+
+  /* =====================================================
+     MOBILE — BELOW 768px
+  ===================================================== */
+
+  @media (max-width: 767px) {
     flex-direction: column;
 
     height: auto;
+
+    min-height: 100%;
+
+    overflow: visible;
   }
 `;
+
+// =====================================================
+// FORM SECTION
+// =====================================================
 
 const FormSection = styled.div`
   width: 50%;
@@ -299,12 +287,42 @@ const FormSection = styled.div`
 
   padding: 45px;
 
-  @media (max-width: 768px) {
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    width: 58%;
+
+    height: 100%;
+
+    padding: 25px 30px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
     width: 100%;
 
-    padding: 35px 25px;
+    padding: 32px 28px 38px;
+
+    box-sizing: border-box;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    padding: 26px 18px 30px;
   }
 `;
+
+// =====================================================
+// FORM WRAPPER
+// =====================================================
 
 const FormWrapper = styled.div`
   width: 100%;
@@ -312,7 +330,35 @@ const FormWrapper = styled.div`
   max-width: 360px;
 
   text-align: center;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    max-width: 315px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
+    max-width: 430px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    max-width: 100%;
+  }
 `;
+
+// =====================================================
+// LOGO
+// =====================================================
 
 const Logo = styled(motion.h1)`
   font-family: Georgia, serif;
@@ -330,7 +376,41 @@ const Logo = styled(motion.h1)`
 
     font-weight: 400;
   }
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 25px;
+
+    margin-bottom: 18px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
+    font-size: 27px;
+
+    margin-bottom: 25px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+
+    margin-bottom: 20px;
+  }
 `;
+
+// =====================================================
+// HEADING
+// =====================================================
 
 const Heading = styled(motion.h2)`
   font-size: 28px;
@@ -340,7 +420,37 @@ const Heading = styled(motion.h2)`
   color: ${({ theme }) => theme.text};
 
   margin: 0 0 10px;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 23px;
+
+    margin-bottom: 6px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
+    font-size: 25px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    font-size: 22px;
+  }
 `;
+
+// =====================================================
+// SUBTITLE
+// =====================================================
 
 const Subtitle = styled(motion.p)`
   font-size: 14px;
@@ -350,7 +460,45 @@ const Subtitle = styled(motion.p)`
   opacity: 0.6;
 
   margin: 0 0 30px;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 11px;
+
+    line-height: 1.4;
+
+    margin-bottom: 17px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
+    font-size: 13px;
+
+    margin-bottom: 22px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+
+    line-height: 1.5;
+
+    margin-bottom: 18px;
+  }
 `;
+
+// =====================================================
+// FORM
+// =====================================================
 
 const Form = styled.form`
   display: flex;
@@ -360,7 +508,35 @@ const Form = styled.form`
   gap: 16px;
 
   text-align: left;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    gap: 10px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
+    gap: 14px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    gap: 12px;
+  }
 `;
+
+// =====================================================
+// INPUT GROUP
+// =====================================================
 
 const InputGroup = styled.div`
   display: flex;
@@ -368,7 +544,27 @@ const InputGroup = styled.div`
   flex-direction: column;
 
   gap: 8px;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    gap: 4px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    gap: 6px;
+  }
 `;
+
+// =====================================================
+// LABEL
+// =====================================================
 
 const Label = styled.label`
   font-size: 13px;
@@ -376,7 +572,27 @@ const Label = styled.label`
   font-weight: 500;
 
   color: ${({ theme }) => theme.text};
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 11px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
+
+// =====================================================
+// INPUT
+// =====================================================
 
 const Input = styled(motion.input)`
   width: 100%;
@@ -412,13 +628,61 @@ const Input = styled(motion.input)`
       0 0 0 3px
       rgba(18, 51, 51, 0.08);
   }
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    padding: 10px 12px;
+
+    font-size: 12px;
+
+    border-radius: 8px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    padding: 12px 14px;
+
+    font-size: 13px;
+  }
 `;
+
+// =====================================================
+// PASSWORD
+// =====================================================
 
 const PasswordWrapper = styled.div`
   position: relative;
 
+  width: 100%;
+
   input {
     padding-right: 60px;
+  }
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    input {
+      padding-right: 52px;
+    }
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    input {
+      padding-right: 55px;
+    }
   }
 `;
 
@@ -442,7 +706,31 @@ const ShowButton = styled.button`
   font-size: 12px;
 
   cursor: pointer;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    right: 8px;
+
+    font-size: 10px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    right: 10px;
+
+    font-size: 11px;
+  }
 `;
+
+// =====================================================
+// SUBMIT BUTTON
+// =====================================================
 
 const SubmitButton = styled(motion.button)`
   display: flex;
@@ -476,11 +764,49 @@ const SubmitButton = styled(motion.button)`
   box-shadow:
     0 8px 20px
     rgba(18, 51, 51, 0.15);
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    padding: 10px;
+
+    margin-top: 3px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    padding: 13px;
+
+    font-size: 13px;
+
+    margin-top: 3px;
+  }
 `;
 
 const Arrow = styled.span`
   font-size: 18px;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 15px;
+  }
 `;
+
+// =====================================================
+// SWITCH TEXT
+// =====================================================
 
 const SwitchText = styled.p`
   margin-top: 25px;
@@ -490,6 +816,34 @@ const SwitchText = styled.p`
   color: ${({ theme }) => theme.text};
 
   opacity: 0.7;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    margin-top: 13px;
+
+    font-size: 11px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
+    margin-top: 21px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    margin-top: 18px;
+
+    font-size: 12px;
+  }
 `;
 
 const SwitchButton = styled.button`
@@ -508,6 +862,10 @@ const SwitchButton = styled.button`
   }
 `;
 
+// =====================================================
+// IMAGE SECTION
+// =====================================================
+
 const ImageSection = styled.div`
   position: relative;
 
@@ -515,19 +873,58 @@ const ImageSection = styled.div`
 
   overflow: hidden;
 
-  @media (max-width: 768px) {
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    width: 42%;
+
+    height: 100%;
+
+    flex-shrink: 0;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
     width: 100%;
 
-    height: 260px;
+    height: 320px;
+
+    flex-shrink: 0;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    height: 280px;
   }
 `;
 
+// =====================================================
+// IMAGE
+// =====================================================
+
 const Image = styled(motion.img)`
   width: 100%;
+
   height: 100%;
 
   object-fit: cover;
+
+  object-position: center center;
+
+  display: block;
 `;
+
+// =====================================================
+// IMAGE OVERLAY
+// =====================================================
 
 const ImageOverlay = styled.div`
   position: absolute;
@@ -541,6 +938,10 @@ const ImageOverlay = styled.div`
   );
 `;
 
+// =====================================================
+// IMAGE CONTENT
+// =====================================================
+
 const ImageContent = styled(motion.div)`
   position: absolute;
 
@@ -552,12 +953,46 @@ const ImageContent = styled(motion.div)`
 
   color: #f1f5f2;
 
-  @media (max-width: 768px) {
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    bottom: 28px;
+
+    left: 25px;
+
+    right: 18px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
     bottom: 25px;
 
     left: 25px;
+
+    right: 20px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    bottom: 20px;
+
+    left: 18px;
+
+    right: 15px;
   }
 `;
+
+// =====================================================
+// IMAGE SMALL TEXT
+// =====================================================
 
 const SmallText = styled.p`
   font-size: 11px;
@@ -567,7 +1002,35 @@ const SmallText = styled.p`
   margin-bottom: 15px;
 
   opacity: 0.8;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 9px;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 11px;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    font-size: 9px;
+
+    letter-spacing: 3px;
+
+    margin-bottom: 10px;
+  }
 `;
+
+// =====================================================
+// IMAGE TITLE
+// =====================================================
 
 const ImageTitle = styled.h2`
   font-family: Georgia, serif;
@@ -580,10 +1043,38 @@ const ImageTitle = styled.h2`
 
   margin: 0 0 15px;
 
-  @media (max-width: 768px) {
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 27px;
+
+    margin-bottom: 11px;
+  }
+
+  /* =====================================================
+     MOBILE
+  ===================================================== */
+
+  @media (max-width: 767px) {
     font-size: 28px;
   }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    font-size: 24px;
+
+    margin-bottom: 10px;
+  }
 `;
+
+// =====================================================
+// IMAGE DESCRIPTION
+// =====================================================
 
 const ImageDescription = styled.p`
   font-size: 14px;
@@ -591,4 +1082,22 @@ const ImageDescription = styled.p`
   opacity: 0.85;
 
   margin: 0;
+
+  /* =====================================================
+     TABLET
+  ===================================================== */
+
+  @media (min-width: 768px) and (max-width: 1024px) {
+    font-size: 12px;
+
+    line-height: 1.4;
+  }
+
+  /* =====================================================
+     SMALL MOBILE
+  ===================================================== */
+
+  @media (max-width: 480px) {
+    font-size: 12px;
+  }
 `;
