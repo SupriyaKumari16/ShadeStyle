@@ -338,11 +338,6 @@ const AddressPage = ({ onClose }) => {
 
 export default AddressPage;
 
-
-/* =====================================================
-   WATERMARK
-===================================================== */
-
 const Watermark = styled.div`
   position: fixed;
 
@@ -403,11 +398,6 @@ const Watermark = styled.div`
   }
 `;
 
-
-/* =====================================================
-   OVERLAY
-===================================================== */
-
 const Overlay = styled(motion.div)`
   position: fixed;
 
@@ -434,11 +424,6 @@ const Overlay = styled(motion.div)`
 
   box-sizing: border-box;
 `;
-
-
-/* =====================================================
-   MODAL
-===================================================== */
 
 const Modal = styled(motion.div)`
   width: 95%;
@@ -508,11 +493,6 @@ const Modal = styled(motion.div)`
   }
 `;
 
-
-/* =====================================================
-   CLOSE
-===================================================== */
-
 const CloseButton = styled(motion.button)`
   position: absolute;
 
@@ -544,11 +524,6 @@ const CloseButton = styled(motion.button)`
   z-index: 5;
 `;
 
-
-/* =====================================================
-   TITLE
-===================================================== */
-
 const Title = styled(motion.h2)`
   text-align: center;
 
@@ -569,11 +544,6 @@ const Title = styled(motion.h2)`
     margin-bottom: 22px;
   }
 `;
-
-
-/* =====================================================
-   ADD BUTTON
-===================================================== */
 
 const AddButton = styled(motion.button)`
   width: 100%;
@@ -605,11 +575,6 @@ const AddButton = styled(motion.button)`
   }
 `;
 
-
-/* =====================================================
-   EMPTY
-===================================================== */
-
 const EmptyText = styled(motion.p)`
   text-align: center;
 
@@ -623,11 +588,6 @@ const EmptyText = styled(motion.p)`
   margin: 30px 0;
 `;
 
-
-/* =====================================================
-   LIST
-===================================================== */
-
 const ListWrapper = styled.div`
   display: flex;
 
@@ -635,11 +595,6 @@ const ListWrapper = styled.div`
 
   gap: 16px;
 `;
-
-
-/* =====================================================
-   ADDRESS CARD
-===================================================== */
 
 const AddressCard = styled(motion.div)`
   background: ${({ theme }) =>
@@ -661,11 +616,6 @@ const AddressCard = styled(motion.div)`
   box-sizing: border-box;
 `;
 
-
-/* =====================================================
-   NAME
-===================================================== */
-
 const AddressName = styled.h3`
   color: ${({ theme }) =>
     theme.text || "#E8E1D5"};
@@ -676,11 +626,6 @@ const AddressName = styled.h3`
 
   margin: 0 0 7px;
 `;
-
-
-/* =====================================================
-   ADDRESS
-===================================================== */
 
 const AddressText = styled.p`
   color: ${({ theme }) =>
@@ -697,11 +642,6 @@ const AddressText = styled.p`
   word-break: break-word;
 `;
 
-
-/* =====================================================
-   MOBILE
-===================================================== */
-
 const MobileText = styled.p`
   color: ${({ theme }) =>
     theme.text || "#E8E1D5"};
@@ -713,11 +653,6 @@ const MobileText = styled.p`
   line-height: 1.4;
 `;
 
-
-/* =====================================================
-   VERIFIED
-===================================================== */
-
 const Verified = styled.span`
   color: #27833f;
 
@@ -728,11 +663,6 @@ const Verified = styled.span`
   font-size: 12px;
 `;
 
-
-/* =====================================================
-   BUTTONS
-===================================================== */
-
 const CardButtons = styled.div`
   display: flex;
 
@@ -742,11 +672,6 @@ const CardButtons = styled.div`
 
   margin-top: 15px;
 `;
-
-
-/* =====================================================
-   EDIT
-===================================================== */
 
 const EditButton = styled(motion.button)`
   background: ${({ theme }) =>
@@ -769,11 +694,6 @@ const EditButton = styled(motion.button)`
 
   flex: 1;
 `;
-
-
-/* =====================================================
-   REMOVE
-===================================================== */
 
 const RemoveButton = styled(motion.button)`
   background: #ffd6d6;

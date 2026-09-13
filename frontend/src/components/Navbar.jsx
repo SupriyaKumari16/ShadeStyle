@@ -3,14 +3,8 @@ import React, { useState } from "react";
 import { useLocomotiveScroll } from "react-locomotive-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
-
 import { useWishlist } from "../context/WishlistContext";
 import { useCart } from "../context/CartContext";
-
-/* =========================================================
-   DESKTOP NAVBAR
-   ORIGINAL DESKTOP DESIGN — DO NOT MODIFY
-========================================================= */
 
 const DesktopNavbar = styled.div`
   display: block;
@@ -168,8 +162,6 @@ const IconText = styled.span`
   text-transform: capitalize;
 `;
 
-/* ================= DESKTOP PROFILE ================= */
-
 const ProfileDropdown = styled(motion.div)`
   position: absolute;
 
@@ -218,7 +210,6 @@ const LogoutItem = styled(DropdownItem)`
   font-weight: bold;
 `;
 
-/* ================= DESKTOP SEARCH ================= */
 
 const SearchOverlay = styled(motion.div)`
   position: fixed;
@@ -315,11 +306,6 @@ const CloseButton = styled.button`
   }
 `;
 
-/* =========================================================
-   MOBILE + TABLET NAVBAR
-   COMPLETELY SEPARATE DESIGN
-========================================================= */
-
 const MobileNavbar = styled.div`
   display: none;
 
@@ -337,7 +323,6 @@ const MobileNavbar = styled.div`
   }
 `;
 
-/* ================= MOBILE HEADER ================= */
 
 const MobileHeader = styled.div`
   width: 100%;
@@ -366,8 +351,6 @@ const MobileHeader = styled.div`
   }
 `;
 
-/* ================= MOBILE LOGO ================= */
-
 const MobileLogo = styled.div`
   font-family: Georgia, serif;
 
@@ -387,7 +370,6 @@ const MobileLogo = styled.div`
   }
 `;
 
-/* ================= HAMBURGER ================= */
 
 const HamburgerButton = styled(motion.button)`
   width: 46px;
@@ -438,7 +420,6 @@ const HamburgerLine = styled(motion.span)`
   }
 `;
 
-/* ================= MOBILE MENU ================= */
 
 const MobileMenu = styled(motion.div)`
   position: absolute;
@@ -471,7 +452,6 @@ const MobileMenu = styled(motion.div)`
   }
 `;
 
-/* ================= MOBILE NAV LINK ================= */
 
 const MobileNavLink = styled(motion.div)`
   width: 100%;
@@ -511,8 +491,6 @@ const MobileNavLink = styled(motion.div)`
   }
 `;
 
-/* ================= MOBILE ACTION ================= */
-
 const MobileAction = styled(motion.button)`
   width: 100%;
 
@@ -545,8 +523,6 @@ const MobileAction = styled(motion.button)`
 const MobileProfileWrapper = styled.div`
   width: 100%;
 `;
-
-/* ================= MOBILE PROFILE ================= */
 
 const MobileProfileDropdown = styled(motion.div)`
   width: 100%;
@@ -593,7 +569,6 @@ const MobileLogoutItem = styled(MobileDropdownItem)`
   font-weight: bold;
 `;
 
-/* ================= MOBILE SEARCH ================= */
 
 const MobileSearchOverlay = styled(motion.div)`
   position: fixed;
@@ -794,10 +769,6 @@ const Navbar = () => {
     });
   };
 
-  /* =====================================================
-     MOBILE / TABLET SCROLL
-  ===================================================== */
-
   const handleMobileScroll = (id) => {
     const elem = document.querySelector(id);
 
@@ -822,9 +793,6 @@ const Navbar = () => {
     });
   };
 
-  /* =====================================================
-     DESKTOP PROFILE
-  ===================================================== */
 
   const handleProfileItem = (item) => {
     if (item === "Login / Signup") {
@@ -872,9 +840,6 @@ const Navbar = () => {
     setOpenProfile(false);
   };
 
-  /* =====================================================
-     MOBILE PROFILE
-  ===================================================== */
 
   const handleMobileProfileItem = (item) => {
     if (item === "Login / Signup") {
@@ -932,19 +897,11 @@ const Navbar = () => {
     setMobileProfileOpen(false);
   };
 
-  /* =====================================================
-     CLOSE MOBILE MENU
-  ===================================================== */
-
   const closeMobileMenu = () => {
     setMobileOpen(false);
 
     setMobileProfileOpen(false);
   };
-
-  /* =====================================================
-     CLOSE SEARCH
-  ===================================================== */
 
   const closeDesktopSearch = () => {
     setOpenSearch(false);
@@ -960,10 +917,6 @@ const Navbar = () => {
 
   return (
     <>
-      {/* =================================================
-          DESKTOP NAVBAR
-          ORIGINAL DESIGN
-      ================================================= */}
 
       <DesktopNavbar>
         <NavContainer
@@ -1221,10 +1174,6 @@ const Navbar = () => {
         </NavContainer>
       </DesktopNavbar>
 
-      {/* =================================================
-          MOBILE + TABLET NAVBAR
-          COMPLETELY SEPARATE
-      ================================================= */}
 
       <MobileNavbar>
         <MobileHeader>
@@ -1306,10 +1255,6 @@ const Navbar = () => {
             />
           </HamburgerButton>
         </MobileHeader>
-
-        {/* =================================================
-            MOBILE MENU
-        ================================================= */}
 
         <AnimatePresence>
           {mobileOpen && (
@@ -1536,10 +1481,6 @@ const Navbar = () => {
         </AnimatePresence>
       </MobileNavbar>
 
-      {/* =================================================
-          DESKTOP SEARCH
-      ================================================= */}
-
       <AnimatePresence>
         {openSearch && (
           <SearchOverlay
@@ -1595,10 +1536,6 @@ const Navbar = () => {
           </SearchOverlay>
         )}
       </AnimatePresence>
-
-      {/* =================================================
-          MOBILE / TABLET SEARCH
-      ================================================= */}
 
       <AnimatePresence>
         {mobileSearchOpen && (
