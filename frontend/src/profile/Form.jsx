@@ -22,6 +22,9 @@ const Form = ({
     type: "Home",
   });
 
+  const [pincodeStatus, setPincodeStatus] = useState("idle");
+  const [pincodeMessage, setPincodeMessage] = useState("");
+
   useEffect(() => {
     if (defaultValues) {
       setFormData({
@@ -42,11 +45,131 @@ const Form = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
 
+    if (name === "pincode") {
+      const cleanedPincode = value.replace(/\D/g, "").slice(0, 6);
+
+      setFormData((prev) => ({
+        ...prev,
+        pincode: cleanedPincode,
+        ...(cleanedPincode.length < 6
+          ? {
+              city: "",
+              state: "",
+            }
+          : {}),
+      }));
+
+      setPincodeStatus(
+        cleanedPincode.length === 6 ? "loading" : "idle"
+      );
+      setPincodeMessage("");
+
+      return;
+    }
+
+    if (name === "mobile" || name === "altPhone") {
+      const cleanedMobile = value
+        .replace(/\D/g, "")
+        .slice(0, 10);
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: cleanedMobile,
+      }));
+
+      return;
+    }
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
   };
+
+  useEffect(() => {
+    const pincode = formData.pincode;
+
+    if (pincode.length !== 6) {
+      return;
+    }
+
+    let cancelled = false;
+
+    const fetchPincodeDetails = async () => {
+      try {
+        setPincodeStatus("loading");
+        setPincodeMessage("");
+
+        const response = await fetch(
+          `https://api.postalpincode.in/pincode/${pincode}`
+        );
+
+        if (!response.ok) {
+          throw new Error("Pincode lookup failed");
+        }
+
+        const data = await response.json();
+
+        if (cancelled) return;
+
+        const result = data?.[0];
+
+        if (
+          result?.Status !== "Success" ||
+          !result?.PostOffice?.length
+        ) {
+          setFormData((prev) => ({
+            ...prev,
+            city: "",
+            state: "",
+          }));
+
+          setPincodeStatus("invalid");
+          setPincodeMessage("Pincode does not exist");
+
+          return;
+        }
+
+        const postOffice = result.PostOffice[0];
+
+        setFormData((prev) => ({
+          ...prev,
+          city:
+            postOffice.District ||
+            postOffice.Block ||
+            "",
+          state: postOffice.State || "",
+        }));
+
+        setPincodeStatus("valid");
+        setPincodeMessage("Pincode verified");
+      } catch (error) {
+        if (cancelled) return;
+
+        console.error(
+          "Pincode lookup error:",
+          error
+        );
+
+        setFormData((prev) => ({
+          ...prev,
+          city: "",
+          state: "",
+        }));
+
+        setPincodeStatus("invalid");
+        setPincodeMessage(
+          "Unable to verify pincode"
+        );
+      }
+    };
+
+    fetchPincodeDetails();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [formData.pincode]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -57,6 +180,43 @@ const Form = ({
       !formData.address.trim()
     ) {
       alert("⚠ Please fill required fields!");
+      return;
+    }
+
+    if (formData.mobile.length !== 10) {
+      alert("⚠ Please enter a valid 10-digit Indian mobile number.");
+      return;
+    }
+
+    if (!/^[6-9]\d{9}$/.test(formData.mobile)) {
+      alert(
+        "⚠ Indian mobile number must start with 6, 7, 8 or 9."
+      );
+      return;
+    }
+
+    if (
+      formData.altPhone &&
+      !/^[6-9]\d{9}$/.test(formData.altPhone)
+    ) {
+      alert(
+        "⚠ Please enter a valid 10-digit alternate mobile number."
+      );
+      return;
+    }
+
+    if (formData.pincode.length !== 6) {
+      alert("⚠ Please enter a valid 6-digit pincode.");
+      return;
+    }
+
+    if (pincodeStatus === "invalid") {
+      alert("⚠ Pincode does not exist.");
+      return;
+    }
+
+    if (pincodeStatus === "loading") {
+      alert("⚠ Please wait while the pincode is being verified.");
       return;
     }
 
@@ -189,7 +349,9 @@ const Form = ({
               value={formData.mobile}
               onChange={handleChange}
               inputMode="numeric"
+              maxLength={10}
               autoComplete="tel"
+              placeholder="Enter 10-digit mobile number"
             />
 
             {verified && (
@@ -228,7 +390,19 @@ const Form = ({
               value={formData.pincode}
               onChange={handleChange}
               inputMode="numeric"
+              maxLength={6}
+              placeholder="Enter 6-digit pincode"
             />
+
+            {pincodeMessage && (
+              <PincodeMessage
+                $status={pincodeStatus}
+              >
+                {pincodeStatus === "valid" && "✔ "}
+                {pincodeStatus === "invalid" && "⚠ "}
+                {pincodeMessage}
+              </PincodeMessage>
+            )}
           </InputGroup>
 
           {/* LOCALITY */}
@@ -660,6 +834,23 @@ const Select = styled.select`
     border-color: ${({ theme }) =>
       theme.text || "#123333"};
   }
+`;
+
+/* =====================================================
+   PINCODE MESSAGE
+===================================================== */
+
+const PincodeMessage = styled.span`
+  margin-top: 5px;
+  font-size: 12px;
+  font-weight: 600;
+
+  color: ${({ $status, theme }) =>
+    $status === "valid"
+      ? "#27833f"
+      : $status === "invalid"
+      ? "#d83a3a"
+      : theme.text || "#123333"};
 `;
 
 /* =====================================================

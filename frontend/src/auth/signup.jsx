@@ -8,10 +8,68 @@ const Signup = ({ onSwitch }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  // =========================
+  // FORM STATES
+  // =========================
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  // =========================
+  // SIGNUP
+  // =========================
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Signup submitted");
+    // Check password match
+    if (password !== confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Signup failed");
+        return;
+      }
+
+      console.log("Signup successful:", data);
+
+      alert("Account created successfully!");
+
+      // Clear form
+      setName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+
+      // Switch to Login
+      onSwitch();
+    } catch (error) {
+      console.error("Signup error:", error);
+
+      alert("Unable to connect to server");
+    }
   };
 
   return (
@@ -72,10 +130,16 @@ const Signup = ({ onSwitch }) => {
           </Subtitle>
 
           <Form onSubmit={handleSubmit}>
+            {/* NAME */}
+
             <InputGroup>
               <Label>Full Name</Label>
 
               <Input
+                value={name}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
                 whileFocus={{
                   scale: 1.02,
                 }}
@@ -88,10 +152,16 @@ const Signup = ({ onSwitch }) => {
               />
             </InputGroup>
 
+            {/* EMAIL */}
+
             <InputGroup>
               <Label>Email Address</Label>
 
               <Input
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
                 whileFocus={{
                   scale: 1.02,
                 }}
@@ -104,43 +174,71 @@ const Signup = ({ onSwitch }) => {
               />
             </InputGroup>
 
+            {/* PASSWORD */}
+
             <InputGroup>
               <Label>Password</Label>
 
               <PasswordWrapper>
                 <Input
+                  value={password}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
                   whileFocus={{
                     scale: 1.02,
                   }}
                   transition={{
                     duration: 0.2,
                   }}
-                  type={showPassword ? "text" : "password"}
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
                   placeholder="Create a password"
                   required
                 />
 
                 <ShowButton
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() =>
+                    setShowPassword(
+                      !showPassword
+                    )
+                  }
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword
+                    ? "Hide"
+                    : "Show"}
                 </ShowButton>
               </PasswordWrapper>
             </InputGroup>
+
+            {/* CONFIRM PASSWORD */}
 
             <InputGroup>
               <Label>Confirm Password</Label>
 
               <PasswordWrapper>
                 <Input
+                  value={confirmPassword}
+                  onChange={(e) =>
+                    setConfirmPassword(
+                      e.target.value
+                    )
+                  }
                   whileFocus={{
                     scale: 1.02,
                   }}
                   transition={{
                     duration: 0.2,
                   }}
-                  type={showConfirmPassword ? "text" : "password"}
+                  type={
+                    showConfirmPassword
+                      ? "text"
+                      : "password"
+                  }
                   placeholder="Confirm your password"
                   required
                 />
@@ -148,13 +246,19 @@ const Signup = ({ onSwitch }) => {
                 <ShowButton
                   type="button"
                   onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
+                    setShowConfirmPassword(
+                      !showConfirmPassword
+                    )
                   }
                 >
-                  {showConfirmPassword ? "Hide" : "Show"}
+                  {showConfirmPassword
+                    ? "Hide"
+                    : "Show"}
                 </ShowButton>
               </PasswordWrapper>
             </InputGroup>
+
+            {/* SUBMIT */}
 
             <SubmitButton
               type="submit"
@@ -173,7 +277,9 @@ const Signup = ({ onSwitch }) => {
 
           <SwitchText>
             Already have an account?{" "}
-            <SwitchButton onClick={onSwitch}>Login</SwitchButton>
+            <SwitchButton onClick={onSwitch}>
+              Login
+            </SwitchButton>
           </SwitchText>
         </FormWrapper>
       </FormSection>
@@ -215,7 +321,9 @@ const Signup = ({ onSwitch }) => {
             ease: "easeOut",
           }}
         >
-          <SmallText>FIND YOUR STYLE</SmallText>
+          <SmallText>
+            FIND YOUR STYLE
+          </SmallText>
 
           <ImageTitle>
             Dress the
@@ -224,7 +332,8 @@ const Signup = ({ onSwitch }) => {
           </ImageTitle>
 
           <ImageDescription>
-            Create an account and explore your style.
+            Create an account and explore your
+            style.
           </ImageDescription>
         </ImageContent>
       </ImageSection>

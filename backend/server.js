@@ -4,12 +4,14 @@ import dotenv from "dotenv";
 
 import connectDB from "./config/db.js";
 import productRoutes from "./routes/productRoutes.js";
-
+import authRoutes from "./routes/authRoutes.js";
+import testRoutes from "./routes/testRoutes.js";
+import addressRoutes from "./routes/addressRoutes.js";
+import accountRoutes from "./routes/accountRoutes.js";
 
 dotenv.config();
 
 const app = express();
-
 
 /* =========================
    MIDDLEWARE
@@ -24,7 +26,6 @@ app.use(
 
 app.use(express.json());
 
-
 /* =========================
    TEST ROUTE
 ========================= */
@@ -36,7 +37,6 @@ app.get("/", (req, res) => {
   });
 });
 
-
 /* =========================
    PRODUCT ROUTES
 ========================= */
@@ -46,7 +46,26 @@ app.use(
   productRoutes
 );
 
+/* =========================
+   AUTH ROUTES
+========================= */
 
+app.use(
+  "/api/auth",
+  authRoutes
+);
+
+/* =========================
+   TEST AUTH ROUTES
+========================= */
+
+app.use(
+  "/api/test",
+  testRoutes
+);
+
+app.use("/api/addresses", addressRoutes);
+app.use("/api/account", accountRoutes);
 
 /* =========================
    START SERVER
@@ -55,11 +74,8 @@ app.use(
 const PORT =
   process.env.PORT || 5000;
 
-
 const startServer = async () => {
-
   try {
-
     await connectDB();
 
     app.listen(
@@ -70,9 +86,7 @@ const startServer = async () => {
         );
       }
     );
-
   } catch (error) {
-
     console.error(
       "Server startup failed."
     );
@@ -80,6 +94,5 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
 
 startServer();

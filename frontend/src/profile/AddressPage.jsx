@@ -1,25 +1,96 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 import Form from "./Form";
 
-const STORAGE_KEY = "account_details_list";
+const API_URL = "http://localhost:5000/api/addresses";
 
 const AddressPage = ({ onClose }) => {
+  const navigate = useNavigate();
+
   const [addresses, setAddresses] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
 
   // =========================
+  // MAP BACKEND DATA → FORM DATA
+  // =========================
+
+  const mapAddressForFrontend = (address) => ({
+    id: address.id,
+    name: address.name || "",
+    mobile: address.mobile || "",
+    pincode: address.pincode || "",
+    locality: address.locality || "",
+    address: address.address_line || "",
+    city: address.city || "",
+    state: address.state || "",
+    landmark: address.landmark || "",
+    altPhone: address.alt_phone || "",
+    type:
+      address.address_type?.toLowerCase() === "work"
+        ? "Work"
+        : "Home",
+    verified: Boolean(address.verified),
+    isAccountDetails: Boolean(address.is_account_details),
+  });
+
+  // =========================
+  // GET AUTH TOKEN
+  // =========================
+
+  const getToken = () => {
+    return localStorage.getItem("token");
+  };
+
+  // =========================
   // LOAD ADDRESSES
   // =========================
 
-  const loadAddresses = () => {
-    const saved =
-      JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
+  const loadAddresses = async () => {
+    const token = getToken();
 
-    setAddresses(saved);
+    if (!token) {
+      navigate("/auth");
+      return;
+    }
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        alert("Your session has expired. Please login again.");
+        navigate("/auth");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to fetch addresses"
+        );
+      }
+
+      const formattedAddresses = (data.addresses || []).map(
+        mapAddressForFrontend
+      );
+
+      setAddresses(formattedAddresses);
+    } catch (error) {
+      console.error("Load addresses error:", error);
+      alert("Unable to load your saved addresses.");
+    }
   };
 
   useEffect(() => {
@@ -27,55 +98,199 @@ const AddressPage = ({ onClose }) => {
   }, []);
 
   // =========================
-  // SAVE ADDRESS
+  // SAVE / UPDATE ADDRESS
   // =========================
 
-  const handleSave = (data) => {
-    let updated = [...addresses];
+  const handleSave = async (formData) => {
+    const token = getToken();
 
-    if (editIndex !== null) {
-      updated[editIndex] = data;
-    } else {
-      updated.push(data);
+    if (!token) {
+      navigate("/auth");
+      return;
     }
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(updated)
-    );
+    const existingAddress =
+      editIndex !== null ? addresses[editIndex] : null;
 
-    // Address list reload signal
+    const mobileChanged =
+      existingAddress &&
+      existingAddress.mobile !== formData.mobile;
 
-    localStorage.setItem(
-      "reload_list",
-      Date.now().toString()
-    );
+    const payload = {
+      name: formData.name,
+      mobile: formData.mobile,
+      pincode: formData.pincode,
+      locality: formData.locality,
+      state: formData.state,
+      city: formData.city,
+      addressLine: formData.address,
+      landmark: formData.landmark,
+      altPhone: formData.altPhone,
+      addressType: formData.type || "Home",
 
-    setAddresses(updated);
-    setShowForm(false);
-    setEditIndex(null);
+      // Keep verified status for an unchanged mobile.
+      // If mobile is changed from Address Page, require
+      // verification again instead of falsely keeping it verified.
+      verified: mobileChanged
+        ? false
+        : Boolean(existingAddress?.verified),
+
+      // Preserve the Account Details marker when editing
+      // that same address. New addresses are normal addresses.
+      isAccountDetails: Boolean(
+        existingAddress?.isAccountDetails
+      ),
+    };
+
+    try {
+      let response;
+
+      // EDIT EXISTING ADDRESS
+      if (editIndex !== null) {
+        const addressId = addresses[editIndex]?.id;
+
+        if (!addressId) {
+          alert("Address ID not found.");
+          return;
+        }
+
+        response = await fetch(
+          `${API_URL}/${addressId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+          }
+        );
+      } else {
+        // ADD NEW ADDRESS
+        response = await fetch(API_URL, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(payload),
+        });
+      }
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        alert("Your session has expired. Please login again.");
+        navigate("/auth");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to save address"
+        );
+      }
+
+      const savedAddress = mapAddressForFrontend(
+        data.address
+      );
+
+      if (editIndex !== null) {
+        const updated = [...addresses];
+        updated[editIndex] = savedAddress;
+        setAddresses(updated);
+      } else {
+        setAddresses((prev) => [savedAddress, ...prev]);
+      }
+
+      // Keep existing reload signal for other existing components.
+      localStorage.setItem(
+        "reload_list",
+        Date.now().toString()
+      );
+
+      setShowForm(false);
+      setEditIndex(null);
+
+      alert(
+        editIndex !== null
+          ? "Address updated successfully!"
+          : "Address added successfully!"
+      );
+    } catch (error) {
+      console.error("Save address error:", error);
+      alert(
+        error.message || "Unable to save address."
+      );
+    }
   };
 
   // =========================
   // REMOVE ADDRESS
   // =========================
 
-  const handleRemove = (index) => {
-    const updated = addresses.filter(
-      (_, i) => i !== index
-    );
+  const handleRemove = async (index) => {
+    const token = getToken();
 
-    setAddresses(updated);
+    if (!token) {
+      navigate("/auth");
+      return;
+    }
 
-    localStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify(updated)
-    );
+    const addressId = addresses[index]?.id;
 
-    localStorage.setItem(
-      "reload_list",
-      Date.now().toString()
-    );
+    if (!addressId) {
+      alert("Address ID not found.");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `${API_URL}/${addressId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.status === 401) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+
+        alert("Your session has expired. Please login again.");
+        navigate("/auth");
+        return;
+      }
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "Failed to delete address"
+        );
+      }
+
+      setAddresses((prev) =>
+        prev.filter((_, i) => i !== index)
+      );
+
+      localStorage.setItem(
+        "reload_list",
+        Date.now().toString()
+      );
+
+      alert("Address removed successfully!");
+    } catch (error) {
+      console.error("Delete address error:", error);
+      alert(
+        error.message || "Unable to remove address."
+      );
+    }
   };
 
   // =========================
@@ -225,7 +440,10 @@ const AddressPage = ({ onClose }) => {
             <AnimatePresence mode="popLayout">
               {addresses.map((address, index) => (
                 <AddressCard
-                  key={`${index}-${address.mobile || ""}`}
+                  key={
+                    address.id ||
+                    `${index}-${address.mobile || ""}`
+                  }
                   initial={{
                     opacity: 0,
                     y: 25,

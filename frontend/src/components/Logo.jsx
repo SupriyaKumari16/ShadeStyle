@@ -7,20 +7,74 @@ const Container = styled.div`
   position: absolute;
   top: 1rem;
   left: 1rem;
-  z-index: 6;
+
+  /* Keep logo above navbar, title and video */
+  z-index: 1000;
 
   width: fit-content;
+  pointer-events: auto;
 
   a {
     width: 100%;
     display: flex;
     align-items: flex-end;
+    position: relative;
+    z-index: 1000;
   }
 
   svg {
     width: 4rem;
     height: auto;
     overflow: visible;
+    display: block;
+  }
+
+  /* =========================
+     TABLET
+     ========================= */
+
+  @media (max-width: 64em) {
+    top: 1rem;
+    left: 1rem;
+  }
+
+  /* =========================
+     MOBILE
+     ========================= */
+
+  @media (max-width: 48em) {
+    top: 0.85rem;
+    left: 0.85rem;
+
+    svg {
+      width: 3.5rem;
+    }
+  }
+
+  /* =========================
+     SMALL PHONE
+     ========================= */
+
+  @media (max-width: 30em) {
+    top: 0.65rem;
+    left: 0.65rem;
+
+    svg {
+      width: 3rem;
+    }
+  }
+
+  /* =========================
+     VERY SMALL PHONE
+     ========================= */
+
+  @media (max-width: 23.5em) {
+    top: 0.55rem;
+    left: 0.55rem;
+
+    svg {
+      width: 2.7rem;
+    }
   }
 `;
 

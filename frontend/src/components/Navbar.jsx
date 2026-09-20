@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "framer-motion";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocomotiveScroll } from "react-locomotive-scroll";
 import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -327,11 +327,11 @@ const MobileNavbar = styled.div`
     display: block;
 
     position: fixed;
-
     top: 0;
     left: 0;
 
     width: 100%;
+    max-width: 100vw;
 
     z-index: 5000;
   }
@@ -343,7 +343,7 @@ const MobileHeader = styled.div`
   width: 100%;
   height: 68px;
 
-  padding: 0 18px;
+  padding: 0 22px;
 
   box-sizing: border-box;
 
@@ -360,9 +360,19 @@ const MobileHeader = styled.div`
 
   z-index: 5001;
 
+  @media (max-width: 768px) {
+    height: 64px;
+    padding: 0 18px;
+  }
+
   @media (max-width: 480px) {
-    height: 62px;
+    height: 60px;
     padding: 0 14px;
+  }
+
+  @media (max-width: 360px) {
+    height: 58px;
+    padding: 0 12px;
   }
 `;
 
@@ -371,7 +381,7 @@ const MobileHeader = styled.div`
 const MobileLogo = styled.div`
   font-family: Georgia, serif;
 
-  font-size: 25px;
+  font-size: 27px;
 
   font-weight: 600;
 
@@ -382,16 +392,29 @@ const MobileLogo = styled.div`
     font-weight: 400;
   }
 
+  white-space: nowrap;
+  line-height: 1;
+
+  @media (max-width: 768px) {
+    font-size: 24px;
+  }
+
   @media (max-width: 480px) {
-    font-size: 22px;
+    font-size: 21px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 19px;
   }
 `;
 
 /* ================= HAMBURGER ================= */
 
 const HamburgerButton = styled(motion.button)`
-  width: 46px;
-  height: 46px;
+  width: 48px;
+  height: 48px;
+
+  flex-shrink: 0;
 
   padding: 0;
 
@@ -414,10 +437,20 @@ const HamburgerButton = styled(motion.button)`
 
   -webkit-tap-highlight-color: transparent;
 
+  @media (max-width: 768px) {
+    width: 44px;
+    height: 44px;
+  }
+
   @media (max-width: 480px) {
     width: 42px;
     height: 42px;
     gap: 4px;
+  }
+
+  @media (max-width: 360px) {
+    width: 40px;
+    height: 40px;
   }
 `;
 
@@ -436,6 +469,10 @@ const HamburgerLine = styled(motion.span)`
   @media (max-width: 480px) {
     width: 22px;
   }
+
+  @media (max-width: 360px) {
+    width: 20px;
+  }
 `;
 
 /* ================= MOBILE MENU ================= */
@@ -447,13 +484,15 @@ const MobileMenu = styled(motion.div)`
   left: 0;
 
   width: 100%;
+  max-width: 100vw;
 
-  max-height: calc(100vh - 68px);
+  max-height: calc(100dvh - 68px);
 
+  overflow-x: hidden;
   overflow-y: auto;
+  overscroll-behavior: contain;
 
-  padding: 22px 20px 30px;
-
+  padding: 24px 24px 32px;
   box-sizing: border-box;
 
   background: ${({ theme }) => theme.body};
@@ -462,12 +501,22 @@ const MobileMenu = styled(motion.div)`
 
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
 
+  @media (max-width: 768px) {
+    top: 64px;
+    max-height: calc(100dvh - 64px);
+    padding: 22px 20px 30px;
+  }
+
   @media (max-width: 480px) {
-    top: 62px;
-
-    max-height: calc(100vh - 62px);
-
+    top: 60px;
+    max-height: calc(100dvh - 60px);
     padding: 18px 15px 25px;
+  }
+
+  @media (max-width: 360px) {
+    top: 58px;
+    max-height: calc(100dvh - 58px);
+    padding: 15px 12px 22px;
   }
 `;
 
@@ -505,9 +554,19 @@ const MobileNavLink = styled(motion.div)`
     border-bottom: none;
   }
 
+  @media (max-width: 768px) {
+    padding: 14px 5px;
+    font-size: 14px;
+  }
+
   @media (max-width: 480px) {
     padding: 13px 4px;
     font-size: 13px;
+  }
+
+  @media (max-width: 360px) {
+    padding: 12px 3px;
+    font-size: 12px;
   }
 `;
 
@@ -536,9 +595,19 @@ const MobileAction = styled(motion.button)`
 
   cursor: pointer;
 
+  @media (max-width: 768px) {
+    padding: 14px 5px;
+    font-size: 14px;
+  }
+
   @media (max-width: 480px) {
     padding: 13px 4px;
     font-size: 13px;
+  }
+
+  @media (max-width: 360px) {
+    padding: 12px 3px;
+    font-size: 12px;
   }
 `;
 
@@ -550,6 +619,7 @@ const MobileProfileWrapper = styled.div`
 
 const MobileProfileDropdown = styled(motion.div)`
   width: 100%;
+  box-sizing: border-box;
 
   margin-top: 12px;
 
@@ -647,14 +717,23 @@ const MobileSearchStrip = styled(motion.div)`
 
   z-index: 99999;
 
+  @media (max-width: 768px) {
+    min-height: 72px;
+    padding: 0 18px;
+    gap: 12px;
+  }
+
   @media (max-width: 600px) {
-    min-height: 70px;
-
+    min-height: 68px;
     padding: 0 12px;
-
     gap: 10px;
-
     border-radius: 0 0 16px 16px;
+  }
+
+  @media (max-width: 360px) {
+    min-height: 64px;
+    padding: 0 9px;
+    gap: 7px;
   }
 `;
 
@@ -669,6 +748,10 @@ const MobileSearchIcon = styled.span`
 
   @media (max-width: 600px) {
     font-size: 23px;
+  }
+
+  @media (max-width: 360px) {
+    font-size: 20px;
   }
 `;
 
@@ -705,12 +788,16 @@ const MobileSearchInput = styled.input`
 
   @media (max-width: 600px) {
     height: 44px;
-
     padding: 0 12px;
-
     font-size: 14px;
-
     border-radius: 11px;
+  }
+
+  @media (max-width: 360px) {
+    height: 40px;
+    padding: 0 10px;
+    font-size: 13px;
+    border-radius: 10px;
   }
 `;
 
@@ -738,6 +825,10 @@ const MobileCloseButton = styled.button`
   @media (max-width: 600px) {
     font-size: 23px;
   }
+
+  @media (max-width: 360px) {
+    font-size: 21px;
+  }
 `;
 
 /* =========================================================
@@ -752,6 +843,36 @@ const Navbar = () => {
   const [openSearch, setOpenSearch] = useState(false);
 
   const [openProfile, setOpenProfile] = useState(false);
+
+  /* ================= AUTH STATE ================= */
+
+  const [user, setUser] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem("user");
+      return storedUser ? JSON.parse(storedUser) : null;
+    } catch (error) {
+      console.error("Failed to read user from localStorage:", error);
+      return null;
+    }
+  });
+
+  useEffect(() => {
+    const handleAuthChange = () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        setUser(storedUser ? JSON.parse(storedUser) : null);
+      } catch (error) {
+        console.error("Failed to update auth state:", error);
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("authChange", handleAuthChange);
+
+    return () => {
+      window.removeEventListener("authChange", handleAuthChange);
+    };
+  }, []);
 
   /* ================= MOBILE STATE ================= */
 
@@ -829,34 +950,44 @@ const Navbar = () => {
   const handleProfileItem = (item) => {
     if (item === "Login / Signup") {
       setOpenProfile(false);
-
       navigate("/auth");
-
       return;
     }
 
     if (item === "My Account") {
       setOpenProfile(false);
 
-      navigate("/account");
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
 
+      navigate("/account");
       return;
     }
 
     if (item === "My Orders") {
       setOpenProfile(false);
 
-      navigate("/orders");
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
 
+      navigate("/orders");
       return;
     }
-if (item === "Logout") {
-      localStorage.removeItem("loggedIn");
 
-      alert("Logged out!");
+    if (item === "Logout") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
 
+      setUser(null);
+      window.dispatchEvent(new Event("authChange"));
       setOpenProfile(false);
 
+      alert("Logged out!");
+      navigate("/");
       return;
     }
 
@@ -870,42 +1001,48 @@ if (item === "Logout") {
   const handleMobileProfileItem = (item) => {
     if (item === "Login / Signup") {
       setMobileProfileOpen(false);
-
       setMobileOpen(false);
-
       navigate("/auth");
-
       return;
     }
 
     if (item === "My Account") {
       setMobileProfileOpen(false);
-
       setMobileOpen(false);
 
-      navigate("/account");
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
 
+      navigate("/account");
       return;
     }
 
     if (item === "My Orders") {
       setMobileProfileOpen(false);
-
       setMobileOpen(false);
+
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
 
       navigate("/orders");
-
       return;
     }
-if (item === "Logout") {
-      localStorage.removeItem("loggedIn");
+
+    if (item === "Logout") {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+
+      setUser(null);
+      window.dispatchEvent(new Event("authChange"));
 
       alert("Logged out!");
-
       setMobileProfileOpen(false);
-
       setMobileOpen(false);
-
+      navigate("/");
       return;
     }
 
@@ -1030,7 +1167,7 @@ if (item === "Logout") {
                 y: 0,
               }}
             >
-              <Link to="/wishlist">
+              <Link to={user ? "/wishlist" : "/auth"}>
                 ♡ Wishlist
 
                 {wishlistCount > 0 && (
@@ -1053,7 +1190,7 @@ if (item === "Logout") {
                 y: 0,
               }}
             >
-              <Link to="/cart">
+              <Link to={user ? "/cart" : "/auth"}>
                 🛒 Cart
 
                 {cartCount > 0 && (
@@ -1145,42 +1282,51 @@ if (item === "Logout") {
                         e.stopPropagation()
                       }
                     >
-                      <DropdownItem
-                        onClick={() =>
-                          handleProfileItem(
-                            "Login / Signup"
-                          )
-                        }
-                      >
-                        Login / Signup
-                      </DropdownItem>
+                      {!user ? (
+                        <DropdownItem
+                          onClick={() =>
+                            handleProfileItem("Login / Signup")
+                          }
+                        >
+                          Login / Signup
+                        </DropdownItem>
+                      ) : (
+                        <>
+                          <DropdownItem
+                            style={{
+                              fontWeight: "600",
+                              borderBottom: "1px solid rgba(0,0,0,0.08)",
+                              cursor: "default",
+                            }}
+                          >
+                            Hi, {user.name}
+                          </DropdownItem>
 
-                      <DropdownItem
-                        onClick={() =>
-                          handleProfileItem(
-                            "My Account"
-                          )
-                        }
-                      >
-                        My Account
-                      </DropdownItem>
+                          <DropdownItem
+                            onClick={() =>
+                              handleProfileItem("My Account")
+                            }
+                          >
+                            My Account
+                          </DropdownItem>
 
-                      <DropdownItem
-                        onClick={() =>
-                          handleProfileItem(
-                            "My Orders"
-                          )
-                        }
-                      >
-                        My Orders
-                      </DropdownItem>
-<LogoutItem
-                        onClick={() =>
-                          handleProfileItem("Logout")
-                        }
-                      >
-                        Logout
-                      </LogoutItem>
+                          <DropdownItem
+                            onClick={() =>
+                              handleProfileItem("My Orders")
+                            }
+                          >
+                            My Orders
+                          </DropdownItem>
+
+                          <LogoutItem
+                            onClick={() =>
+                              handleProfileItem("Logout")
+                            }
+                          >
+                            Logout
+                          </LogoutItem>
+                        </>
+                      )}
                     </ProfileDropdown>
                   )}
                 </AnimatePresence>
@@ -1346,7 +1492,7 @@ if (item === "Logout") {
                   scale: 0.98,
                 }}
                 onClick={() => {
-                  navigate("/wishlist");
+                  navigate(user ? "/wishlist" : "/auth");
 
                   closeMobileMenu();
                 }}
@@ -1367,7 +1513,7 @@ if (item === "Logout") {
                   scale: 0.98,
                 }}
                 onClick={() => {
-                  navigate("/cart");
+                  navigate(user ? "/cart" : "/auth");
 
                   closeMobileMenu();
                 }}
@@ -1447,44 +1593,52 @@ if (item === "Logout") {
                         duration: 0.25,
                       }}
                     >
-                      <MobileDropdownItem
-                        onClick={() =>
-                          handleMobileProfileItem(
-                            "Login / Signup"
-                          )
-                        }
-                      >
-                        Login / Signup
-                      </MobileDropdownItem>
 
-                      <MobileDropdownItem
-                        onClick={() =>
-                          handleMobileProfileItem(
-                            "My Account"
-                          )
-                        }
-                      >
-                        My Account
-                      </MobileDropdownItem>
+                      {!user ? (
+                        <MobileDropdownItem
+                          onClick={() =>
+                            handleMobileProfileItem("Login / Signup")
+                          }
+                        >
+                          Login / Signup
+                        </MobileDropdownItem>
+                      ) : (
+                        <>
+                          <MobileDropdownItem
+                            style={{
+                              fontWeight: "600",
+                              borderBottom: "1px solid rgba(0,0,0,0.08)",
+                              cursor: "default",
+                            }}
+                          >
+                            Hi, {user.name}
+                          </MobileDropdownItem>
 
-                      <MobileDropdownItem
-                        onClick={() =>
-                          handleMobileProfileItem(
-                            "My Orders"
-                          )
-                        }
-                      >
-                        My Orders
-                      </MobileDropdownItem>
-<MobileLogoutItem
-                        onClick={() =>
-                          handleMobileProfileItem(
-                            "Logout"
-                          )
-                        }
-                      >
-                        Logout
-                      </MobileLogoutItem>
+                          <MobileDropdownItem
+                            onClick={() =>
+                              handleMobileProfileItem("My Account")
+                            }
+                          >
+                            My Account
+                          </MobileDropdownItem>
+
+                          <MobileDropdownItem
+                            onClick={() =>
+                              handleMobileProfileItem("My Orders")
+                            }
+                          >
+                            My Orders
+                          </MobileDropdownItem>
+
+                          <MobileLogoutItem
+                            onClick={() =>
+                              handleMobileProfileItem("Logout")
+                            }
+                          >
+                            Logout
+                          </MobileLogoutItem>
+                        </>
+                      )}
                     </MobileProfileDropdown>
                   )}
                 </AnimatePresence>

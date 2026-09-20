@@ -8,17 +8,47 @@ const VideoContainer = styled.section`
   width: 100%;
   height: 100vh;
   position: relative;
+  overflow: hidden;
 
   video {
     width: 100%;
     height: 100vh;
     object-fit: cover;
+    display: block;
+
+    /* =========================
+       EXISTING DESKTOP
+       ========================= */
 
     @media (max-width: 48em) {
+      height: 100svh;
       object-position: center 10%;
     }
 
+    /* =========================
+       TABLET
+       ========================= */
+
+    @media (min-width: 48.01em) and (max-width: 64em) {
+      height: 100svh;
+      object-position: center center;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
     @media (max-width: 30em) {
+      height: 100svh;
+      object-position: center 50%;
+    }
+
+    /* =========================
+       SMALL PHONES
+       ========================= */
+
+    @media (max-width: 23.5em) {
+      height: 100svh;
       object-position: center 50%;
     }
   }
@@ -58,6 +88,7 @@ const Title = styled(motion.div)`
   div {
     display: flex;
     flex-direction: row;
+    align-items: center;
   }
 
   h1 {
@@ -68,8 +99,32 @@ const Title = styled(motion.div)`
     text-shadow: 1px 1px 1px
       ${(props) => props.theme.body};
 
+    /* =========================
+       TABLET
+       ========================= */
+
+    @media (min-width: 48.01em) and (max-width: 64em) {
+      font-size: clamp(6rem, 13vw, 9rem);
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 48em) {
+      font-size: clamp(4.5rem, 16vw, 7rem);
+    }
+
+    /* =========================
+       SMALL PHONES
+       ========================= */
+
     @media (max-width: 30em) {
-      font-size: calc(5rem + 8vw);
+      font-size: clamp(3.8rem, 15vw, 5.5rem);
+    }
+
+    @media (max-width: 23.5em) {
+      font-size: clamp(3.2rem, 14.5vw, 4.8rem);
     }
   }
 
@@ -87,10 +142,70 @@ const Title = styled(motion.div)`
 
     text-transform: capitalize;
 
-    @media (max-width: 30em) {
-      font-size: ${(props) => props.theme.fontmd};
+    /* =========================
+       TABLET
+       ========================= */
 
-      margin-top: -1.5rem;
+    @media (min-width: 48.01em) and (max-width: 64em) {
+      font-size: 1.1rem;
+      margin-top: 0.5rem;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 48em) {
+      font-size: 1rem;
+      margin-top: 0.25rem;
+    }
+
+    /* =========================
+       SMALL PHONES
+       ========================= */
+
+    @media (max-width: 30em) {
+      font-size: 0.85rem;
+      margin-top: -0.75rem;
+    }
+
+    @media (max-width: 23.5em) {
+      font-size: 0.78rem;
+      margin-top: -0.5rem;
+    }
+  }
+
+  /* =========================
+     TABLET TITLE
+     ========================= */
+
+  @media (min-width: 48.01em) and (max-width: 64em) {
+    padding: 0 2rem;
+  }
+
+  /* =========================
+     MOBILE TITLE
+     ========================= */
+
+  @media (max-width: 48em) {
+    padding: 0 1rem;
+
+    div {
+      max-width: 100%;
+      justify-content: center;
+    }
+  }
+
+  /* =========================
+     SMALL PHONE TITLE
+     ========================= */
+
+  @media (max-width: 30em) {
+    padding: 0 0.5rem;
+
+    div {
+      width: 100%;
+      justify-content: center;
     }
   }
 `;
@@ -236,13 +351,13 @@ const CoverVideo = () => {
       </Title>
 
       <video
-  src={MainVideo}
-  type="video/mp4"
-  autoPlay
-  muted
-  loop
-  playsInline
-/>
+        src={MainVideo}
+        type="video/mp4"
+        autoPlay
+        muted
+        loop
+        playsInline
+      />
     </VideoContainer>
   );
 };

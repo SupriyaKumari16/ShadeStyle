@@ -1,16 +1,75 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import styled from "styled-components";
+import { useNavigate } from "react-router-dom";
 
 import loginImage from "../assets/login/Modern.png";
 
 const Login = ({ onSwitch }) => {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSubmit = (e) => {
+  // =========================
+  // FORM STATES
+  // =========================
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  // =========================
+  // LOGIN
+  // =========================
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("Login submitted");
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email,
+            password,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Login failed");
+        return;
+      }
+
+      // =========================
+      // SAVE AUTH DATA
+      // =========================
+
+      localStorage.setItem("token", data.token);
+      localStorage.setItem(
+        "user",
+        JSON.stringify(data.user)
+      );
+
+      console.log("Login successful:", data);
+
+      alert("Login successful!");
+
+      // =========================
+      // GO TO HOME
+      // =========================
+
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+
+      alert("Unable to connect to server");
+    }
   };
 
   return (
@@ -126,6 +185,10 @@ const Login = ({ onSwitch }) => {
               <Label>Email Address</Label>
 
               <Input
+                value={email}
+                onChange={(e) =>
+                  setEmail(e.target.value)
+                }
                 whileFocus={{
                   scale: 1.02,
                 }}
@@ -143,29 +206,45 @@ const Login = ({ onSwitch }) => {
 
               <PasswordWrapper>
                 <Input
+                  value={password}
+                  onChange={(e) =>
+                    setPassword(e.target.value)
+                  }
                   whileFocus={{
                     scale: 1.02,
                   }}
                   transition={{
                     duration: 0.2,
                   }}
-                  type={showPassword ? "text" : "password"}
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
                   placeholder="Enter your password"
                   required
                 />
 
                 <ShowButton
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
+                  onClick={() =>
+                    setShowPassword(
+                      !showPassword
+                    )
+                  }
                 >
-                  {showPassword ? "Hide" : "Show"}
+                  {showPassword
+                    ? "Hide"
+                    : "Show"}
                 </ShowButton>
               </PasswordWrapper>
             </InputGroup>
 
             <ForgotPassword
               type="button"
-              onClick={() => console.log("Forgot password")}
+              onClick={() =>
+                console.log("Forgot password")
+              }
             >
               Forgot Password?
             </ForgotPassword>
@@ -187,7 +266,9 @@ const Login = ({ onSwitch }) => {
 
           <SwitchText>
             Don't have an account?{" "}
-            <SwitchButton onClick={onSwitch}>Sign Up</SwitchButton>
+            <SwitchButton onClick={onSwitch}>
+              Sign Up
+            </SwitchButton>
           </SwitchText>
         </FormWrapper>
       </FormSection>
@@ -996,7 +1077,7 @@ const Arrow = styled.span`
 `;
 
 // =====================================================
-// SWITCH
+// SWITCH TEXT
 // =====================================================
 
 const SwitchText = styled.p`

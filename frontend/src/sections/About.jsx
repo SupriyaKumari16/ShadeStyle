@@ -9,48 +9,49 @@ const Section = styled.section`
   min-height: 100vh;
   width: 80vw;
   margin: 0 auto;
-
   position: relative;
-
   display: flex;
 
-  @media (max-width: 48em) {
+  /* TABLET */
+  @media (max-width: 64em) {
     width: 90vw;
+    min-height: 100svh;
   }
 
+  /* MOBILE */
+  @media (max-width: 48em) {
+    width: 92vw;
+    min-height: 100svh;
+  }
+
+  /* SMALL MOBILE */
   @media (max-width: 30em) {
     width: 100vw;
+    min-height: 100svh;
   }
-
-  /* justify-content: center;
-  align-items: center; */
 `;
 
 const Left = styled.div`
   width: 50%;
-
   font-size: ${(props) => props.theme.fontlg};
   font-weight: 300;
-
   position: relative;
   z-index: 5;
-
   margin-top: 20%;
 
+  /* TABLET */
   @media (max-width: 64em) {
     width: 80%;
-
     position: absolute;
 
-    top: 50%;
+    /* Card moved slightly down */
+    top: 58%;
     left: 50%;
 
     transform: translate(-50%, -50%) !important;
 
     margin: 0 auto;
-
     padding: 2rem;
-
     font-weight: 600;
 
     backdrop-filter: blur(2px);
@@ -61,22 +62,54 @@ const Left = styled.div`
     border-radius: 20px;
   }
 
+  /* MOBILE */
   @media (max-width: 48em) {
+    width: 82%;
+
+    /* Move card further down so face stays visible */
+    top: 62%;
+
     font-size: ${(props) => props.theme.fontmd};
+
+    padding: 1.75rem;
+
+    line-height: 1.6;
+
+    max-height: 70svh;
+    overflow-y: auto;
   }
 
+  /* SMALL MOBILE */
   @media (max-width: 30em) {
+    width: 78%;
+
+    top: 64%;
+
     font-size: ${(props) => props.theme.fontsm};
 
-    padding: 2rem;
+    padding: 1.35rem;
 
-    width: 70%;
+    line-height: 1.55;
+
+    max-height: 65svh;
+  }
+
+  /* VERY SMALL PHONES */
+  @media (max-width: 23.5em) {
+    width: 80%;
+
+    top: 65%;
+
+    padding: 1.1rem;
+
+    font-size: 0.8rem;
+
+    line-height: 1.5;
   }
 `;
 
 const Right = styled.div`
   width: 50%;
-
   position: relative;
 
   img {
@@ -86,41 +119,34 @@ const Right = styled.div`
 
   .small-img-1 {
     width: 40%;
-
     position: absolute;
-
     right: 95%;
     bottom: 10%;
   }
 
   .small-img-2 {
     width: 40%;
-
     position: absolute;
-
     left: 80%;
     top: 30%;
   }
 
+  /* TABLET */
   @media (max-width: 64em) {
     width: 100%;
-
     display: flex;
-
     justify-content: center;
     align-items: center;
 
     img {
       width: 100%;
-      height: 100vh;
-
+      height: 100svh;
       object-fit: cover;
     }
 
     .small-img-1 {
       width: 30%;
       height: auto;
-
       left: 5%;
       bottom: 10%;
     }
@@ -128,33 +154,84 @@ const Right = styled.div`
     .small-img-2 {
       width: 30%;
       height: auto;
-
       position: absolute;
-
       left: 60%;
       bottom: 20%;
+    }
+  }
+
+  /* MOBILE */
+  @media (max-width: 48em) {
+    img {
+      width: 100%;
+      height: 100svh;
+      object-fit: cover;
+    }
+
+    .small-img-1 {
+      width: 28%;
+      left: 4%;
+      bottom: 8%;
+    }
+
+    .small-img-2 {
+      width: 28%;
+      left: 64%;
+      bottom: 18%;
+      top: auto;
+    }
+  }
+
+  /* SMALL MOBILE */
+  @media (max-width: 30em) {
+    img {
+      height: 100svh;
+      object-fit: cover;
+    }
+
+    .small-img-1 {
+      width: 26%;
+      left: 3%;
+      bottom: 7%;
+    }
+
+    .small-img-2 {
+      width: 26%;
+      left: 67%;
+      bottom: 16%;
+    }
+  }
+
+  /* VERY SMALL PHONES */
+  @media (max-width: 23.5em) {
+    .small-img-1 {
+      width: 24%;
+      left: 3%;
+      bottom: 6%;
+    }
+
+    .small-img-2 {
+      width: 24%;
+      left: 69%;
+      bottom: 14%;
     }
   }
 `;
 
 const Title = styled.h1`
   font-size: ${(props) => props.theme.fontBig};
-
   font-family: "Kaushan Script";
-
   font-weight: 300;
-
   position: absolute;
-
   top: 1rem;
   left: 5%;
-
   z-index: 5;
 
   span {
     display: inline-block;
   }
 
+  /* TABLET */
   @media (max-width: 64em) {
     font-size: ${(props) =>
       `calc(${props.theme.fontBig} - 5vw)`};
@@ -163,17 +240,31 @@ const Title = styled.h1`
     left: 0%;
   }
 
+  /* MOBILE */
   @media (max-width: 48em) {
     font-size: ${(props) => props.theme.fontxxxl};
+
+    top: 1rem;
+    left: 5%;
+  }
+
+  /* SMALL MOBILE */
+  @media (max-width: 30em) {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+
+    top: 1rem;
+    left: 5%;
+  }
+
+  /* VERY SMALL PHONES */
+  @media (max-width: 23.5em) {
+    font-size: clamp(2.2rem, 11vw, 3.2rem);
   }
 `;
 
 const About = () => {
   return (
-    <Section
-      id="fixed-target"
-      className="about"
-    >
+    <Section id="fixed-target" className="about">
       <Title
         data-scroll
         data-scroll-speed="-2"
@@ -187,29 +278,23 @@ const About = () => {
         data-scroll-sticky
         data-scroll-target="#fixed-target"
       >
-        We&apos;re a fashion studio based in California.
-        We create unique designs that will blow your
-        mind. We also design unique jewellery pieces.
-        Fashion is an ART that cannot be grasped by
-        everyone.
+        We're a fashion studio based in California. We create
+        timeless pieces that combine modern aesthetics with
+        classic design.
 
         <br />
         <br />
 
-        We are very dedicated to making our products.
-        We offer unique and creative products to a wide
-        range of people. We have a variety of styles,
-        but for most people, all of the options are in
-        the box. We specialize in making things that
-        make you happy.
+        Our approach is simple — focus on quality,
+        craftsmanship and creating pieces that make you feel
+        confident. Every collection is carefully designed
+        with attention to detail.
 
         <br />
         <br />
 
-        We strive to build on our vision. As a fashion
-        label, we do our best to create amazing
-        experiences for all people. We are always looking
-        to make something that is easy for everyone.
+        At ShadeStyle, fashion is more than just clothing.
+        It's a way of expressing who you are.
       </Left>
 
       <Right>
