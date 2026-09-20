@@ -25,6 +25,11 @@ import img8 from "../assets/images/colortone/DeepDark.png";
 ===================================================== */
 
 const Section = styled(motion.section)`
+  /* ==============================
+     DESKTOP / DEFAULT
+     ORIGINAL DESIGN
+  ============================== */
+
   min-height: 100vh;
   height: auto;
   width: 100%;
@@ -37,6 +42,36 @@ const Section = styled(motion.section)`
   align-items: flex-start;
 
   position: relative;
+
+
+  /* ==============================
+     TABLET
+  ============================== */
+
+  @media (min-width: 48.01em) and (max-width: 64em) {
+    min-height: 100vh;
+    width: 100%;
+  }
+
+
+  /* ==============================
+     MOBILE
+  ============================== */
+
+  @media (max-width: 48em) {
+    min-height: 100vh;
+    width: 100%;
+  }
+
+
+  /* ==============================
+     SMALL MOBILE
+  ============================== */
+
+  @media (max-width: 30em) {
+    min-height: 100vh;
+    width: 100%;
+  }
 `;
 
 
@@ -45,6 +80,10 @@ const Section = styled(motion.section)`
 ===================================================== */
 
 const Title = styled.h1`
+  /* ==============================
+     DESKTOP / DEFAULT
+  ============================== */
+
   font-size: ${(props) => props.theme.fontxxxl};
 
   font-family: "Kaushan Script";
@@ -65,13 +104,39 @@ const Title = styled.h1`
   z-index: 11;
 
 
-  @media (max-width: 64em) {
+  /* ==============================
+     TABLET
+  ============================== */
+
+  @media (min-width: 48.01em) and (max-width: 64em) {
     font-size: ${(props) => props.theme.fontxxl};
+
+    top: 1rem;
+    left: 5%;
   }
 
 
+  /* ==============================
+     MOBILE
+  ============================== */
+
   @media (max-width: 48em) {
     font-size: ${(props) => props.theme.fontxl};
+
+    top: 1rem;
+    left: 5%;
+  }
+
+
+  /* ==============================
+     SMALL MOBILE
+  ============================== */
+
+  @media (max-width: 30em) {
+    font-size: ${(props) => props.theme.fontxl};
+
+    top: 0.8rem;
+    left: 5%;
   }
 `;
 
@@ -81,6 +146,11 @@ const Title = styled.h1`
 ===================================================== */
 
 const Left = styled.div`
+  /* ==============================
+     DESKTOP / DEFAULT
+     ORIGINAL DESIGN
+  ============================== */
+
   width: 35%;
 
   background-color:
@@ -116,35 +186,57 @@ const Left = styled.div`
   }
 
 
-  @media (max-width: 64em) {
+  /* ==============================
+     TABLET
+  ============================== */
+
+  @media (min-width: 48.01em) and (max-width: 64em) {
+    width: 35%;
+
+    min-height: 100vh;
 
     p {
       font-size:
         ${(props) => props.theme.fontmd};
-    }
 
+      width: 80%;
+    }
   }
 
 
-  @media (max-width: 48em) {
+  /* ==============================
+     MOBILE
+  ============================== */
 
+  @media (max-width: 48em) {
     width: 40%;
+
+    min-height: 100vh;
 
     p {
       font-size:
         ${(props) => props.theme.fontsm};
-    }
 
+      width: 80%;
+    }
   }
 
 
+  /* ==============================
+     SMALL MOBILE
+  ============================== */
+
   @media (max-width: 30em) {
+    width: 42%;
+
+    min-height: 100vh;
 
     p {
       font-size:
         ${(props) => props.theme.fontxs};
-    }
 
+      width: 82%;
+    }
   }
 `;
 
@@ -154,6 +246,11 @@ const Left = styled.div`
 ===================================================== */
 
 const Right = styled.div`
+  /* ==============================
+     DESKTOP / DEFAULT
+     ORIGINAL DESIGN
+  ============================== */
+
   position: absolute;
 
   left: 35%;
@@ -170,6 +267,45 @@ const Right = styled.div`
   justify-content: flex-start;
 
   align-items: center;
+
+
+  /* ==============================
+     TABLET
+  ============================== */
+
+  @media (min-width: 48.01em) and (max-width: 64em) {
+    left: 35%;
+
+    padding-left: 25%;
+
+    min-height: 100vh;
+  }
+
+
+  /* ==============================
+     MOBILE
+  ============================== */
+
+  @media (max-width: 48em) {
+    left: 40%;
+
+    padding-left: 25%;
+
+    min-height: 100vh;
+  }
+
+
+  /* ==============================
+     SMALL MOBILE
+  ============================== */
+
+  @media (max-width: 30em) {
+    left: 42%;
+
+    padding-left: 22%;
+
+    min-height: 100vh;
+  }
 `;
 
 
@@ -178,6 +314,11 @@ const Right = styled.div`
 ===================================================== */
 
 const Item = styled(motion.div)`
+  /* ==============================
+     DESKTOP / DEFAULT
+     ORIGINAL DESIGN
+  ============================== */
+
   display: inline-block;
 
   width: 20rem;
@@ -228,10 +369,84 @@ const Item = styled(motion.div)`
   }
 
 
-  @media (max-width: 48em) {
+  /* ==============================
+     TABLET
+  ============================== */
 
+  @media (min-width: 48.01em) and (max-width: 64em) {
+    width: 18rem;
+
+    margin-right: 5rem;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    h1 {
+      font-size: ${(props) => props.theme.fontmd};
+    }
+
+    p {
+      font-size: ${(props) => props.theme.fontsm};
+    }
+  }
+
+
+  /* ==============================
+     MOBILE
+     SAME CARD DESIGN
+  ============================== */
+
+  @media (max-width: 48em) {
     width: 15rem;
 
+    margin-right: 4rem;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    h1 {
+      font-size: ${(props) => props.theme.fontmd};
+
+      margin-top: 0.8rem;
+    }
+
+    p {
+      font-size: ${(props) => props.theme.fontxs};
+
+      margin-top: 0.3rem;
+    }
+  }
+
+
+  /* ==============================
+     SMALL MOBILE
+  ============================== */
+
+  @media (max-width: 30em) {
+    width: 13rem;
+
+    margin-right: 3rem;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+
+    h1 {
+      font-size: ${(props) => props.theme.fontsm};
+
+      margin-top: 0.7rem;
+    }
+
+    p {
+      font-size: ${(props) => props.theme.fontxs};
+
+      margin-top: 0.25rem;
+    }
   }
 `;
 
