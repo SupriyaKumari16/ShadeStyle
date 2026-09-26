@@ -1,121 +1,150 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-
 /* =====================================================
-   DEMO ORDERS
+   MY ORDERS
 ===================================================== */
 
-const initialOrders = [
-  {
-    id: "SS10245",
-    product: "Elegant Floral Kurti",
-    category: "Women",
-    color: "Green",
-    size: "M",
-    price: 899,
-    quantity: 1,
-    date: "Sep 10",
-    status: "Delivered",
-    image:
-      "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=300",
-  },
-
-  {
-    id: "SS10231",
-    product: "Classic Ethnic Saree",
-    category: "Women",
-    color: "Maroon",
-    size: "Free Size",
-    price: 1299,
-    quantity: 1,
-    date: "Sep 05",
-    status: "On the way",
-    image:
-      "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300",
-  },
-
-  {
-    id: "SS10198",
-    product: "Minimal Gold Necklace",
-    category: "Jewellery",
-    color: "Gold",
-    size: "One Size",
-    price: 699,
-    quantity: 1,
-    date: "Aug 28",
-    status: "Delivered",
-    image:
-      "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300",
-  },
-
-  {
-    id: "SS10172",
-    product: "Printed Summer Dress",
-    category: "Women",
-    color: "Blue",
-    size: "L",
-    price: 1099,
-    quantity: 1,
-    date: "Aug 20",
-    status: "Cancelled",
-    image:
-      "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=300",
-  },
-];
-
-
 const MyOrders = () => {
-
   const navigate = useNavigate();
 
-  const [orders] = useState(initialOrders);
-
+  const [orders, setOrders] = useState([]);
   const [search, setSearch] = useState("");
-
   const [selectedStatus, setSelectedStatus] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  /* =====================================================
+     FETCH MY ORDERS
+  ===================================================== */
+
+  useEffect(() => {
+    const fetchMyOrders = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        if (!token) {
+          navigate("/auth");
+          return;
+        }
+
+        const response = await fetch(
+          "http://localhost:5000/api/orders/my-orders",
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          console.error(
+            "Failed to fetch orders:",
+            data.message
+          );
+
+          setOrders([]);
+          return;
+        }
+
+        const formattedOrders = [];
+
+        data.orders.forEach((order) => {
+          order.items.forEach((item) => {
+            let formattedStatus = "On the way";
+
+            if (order.status === "DELIVERED") {
+              formattedStatus = "Delivered";
+            } else if (order.status === "CANCELLED") {
+              formattedStatus = "Cancelled";
+            } else if (order.status === "RETURNED") {
+              formattedStatus = "Returned";
+            }
+
+            formattedOrders.push({
+              id: order.orderId,
+              orderDbId: order.id,
+              itemId: item.id,
+
+              product: item.productName,
+
+              category: "",
+
+              color: "—",
+
+              size: item.selectedSize || "—",
+
+              price: Number(item.price),
+
+              quantity: Number(item.quantity),
+
+              date: new Date(
+                order.createdAt
+              ).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "short",
+              }),
+
+              status: formattedStatus,
+
+              image: item.productImage,
+            });
+          });
+        });
+
+        setOrders(formattedOrders);
+      } catch (error) {
+        console.error(
+          "Fetch orders error:",
+          error
+        );
+
+        setOrders([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchMyOrders();
+  }, [navigate]);
 
   /* =====================================================
      STATUS FILTER
   ===================================================== */
 
   const handleStatusChange = (status) => {
-
     if (selectedStatus.includes(status)) {
-
       setSelectedStatus(
         selectedStatus.filter(
           (item) => item !== status
         )
       );
-
     } else {
-
       setSelectedStatus([
         ...selectedStatus,
         status,
       ]);
-
     }
   };
-
 
   /* =====================================================
      FILTER ORDERS
   ===================================================== */
 
   const filteredOrders = orders.filter((order) => {
+    const searchText = search.toLowerCase();
 
     const searchMatch =
       order.product
         .toLowerCase()
-        .includes(search.toLowerCase()) ||
+        .includes(searchText) ||
       order.id
         .toLowerCase()
-        .includes(search.toLowerCase());
+        .includes(searchText);
 
     const statusMatch =
       selectedStatus.length === 0 ||
@@ -124,10 +153,12 @@ const MyOrders = () => {
     return searchMatch && statusMatch;
   });
 
+  /* =====================================================
+     RENDER
+  ===================================================== */
 
   return (
     <Page>
-
       <Main>
 
         {/* =================================================
@@ -135,9 +166,7 @@ const MyOrders = () => {
         ================================================= */}
 
         <Header>
-
           <div>
-
             <Title>
               My Orders
             </Title>
@@ -145,11 +174,8 @@ const MyOrders = () => {
             <Subtitle>
               View and manage your recent orders
             </Subtitle>
-
           </div>
-
         </Header>
-
 
         {/* =================================================
             CONTENT
@@ -157,29 +183,23 @@ const MyOrders = () => {
 
         <Content>
 
-
           {/* =================================================
               LEFT FILTERS
           ================================================= */}
 
           <FilterBox>
-
             <FilterTitle>
               Filters
             </FilterTitle>
 
-
             {/* ORDER STATUS */}
 
             <FilterSection>
-
               <SectionTitle>
                 ORDER STATUS
               </SectionTitle>
 
-
               <CheckItem>
-
                 <Checkbox
                   type="checkbox"
                   checked={selectedStatus.includes(
@@ -195,12 +215,9 @@ const MyOrders = () => {
                 <span>
                   On the way
                 </span>
-
               </CheckItem>
 
-
               <CheckItem>
-
                 <Checkbox
                   type="checkbox"
                   checked={selectedStatus.includes(
@@ -216,12 +233,9 @@ const MyOrders = () => {
                 <span>
                   Delivered
                 </span>
-
               </CheckItem>
 
-
               <CheckItem>
-
                 <Checkbox
                   type="checkbox"
                   checked={selectedStatus.includes(
@@ -237,12 +251,9 @@ const MyOrders = () => {
                 <span>
                   Cancelled
                 </span>
-
               </CheckItem>
 
-
               <CheckItem>
-
                 <Checkbox
                   type="checkbox"
                   checked={selectedStatus.includes(
@@ -258,68 +269,49 @@ const MyOrders = () => {
                 <span>
                   Returned
                 </span>
-
               </CheckItem>
-
             </FilterSection>
-
 
             {/* ORDER TIME */}
 
             <FilterSection>
-
               <SectionTitle>
                 ORDER TIME
               </SectionTitle>
 
-
               <CheckItem>
-
                 <Checkbox type="checkbox" />
 
                 <span>
                   Last 30 days
                 </span>
-
               </CheckItem>
 
-
               <CheckItem>
-
                 <Checkbox type="checkbox" />
 
                 <span>
                   2026
                 </span>
-
               </CheckItem>
 
-
               <CheckItem>
-
                 <Checkbox type="checkbox" />
 
                 <span>
                   2025
                 </span>
-
               </CheckItem>
 
-
               <CheckItem>
-
                 <Checkbox type="checkbox" />
 
                 <span>
                   Older
                 </span>
-
               </CheckItem>
-
             </FilterSection>
-
           </FilterBox>
-
 
           {/* =================================================
               RIGHT SIDE
@@ -327,11 +319,9 @@ const MyOrders = () => {
 
           <OrdersArea>
 
-
             {/* SEARCH */}
 
             <SearchWrapper>
-
               <SearchInput
                 type="text"
                 placeholder="Search your orders here"
@@ -351,18 +341,28 @@ const MyOrders = () => {
               >
                 🔍 Search Orders
               </SearchButton>
-
             </SearchWrapper>
-
 
             {/* =================================================
                 ORDER LIST
             ================================================= */}
 
-            {filteredOrders.length === 0 ? (
-
+            {isLoading ? (
               <NoOrders>
+                <NoOrdersIcon>
+                  🛍️
+                </NoOrdersIcon>
 
+                <NoOrdersTitle>
+                  Loading orders...
+                </NoOrdersTitle>
+
+                <NoOrdersText>
+                  Please wait while we fetch your orders.
+                </NoOrdersText>
+              </NoOrders>
+            ) : filteredOrders.length === 0 ? (
+              <NoOrders>
                 <NoOrdersIcon>
                   🛍️
                 </NoOrdersIcon>
@@ -374,19 +374,13 @@ const MyOrders = () => {
                 <NoOrdersText>
                   Try changing your search or filters.
                 </NoOrdersText>
-
               </NoOrders>
-
             ) : (
-
               <OrderList>
-
                 {filteredOrders.map(
                   (order, index) => (
-
                     <OrderCard
-                      key={order.id}
-
+                      key={`${order.id}-${order.itemId}`}
                       onClick={() =>
                         navigate(
                           `/orders/${order.id}`,
@@ -397,46 +391,36 @@ const MyOrders = () => {
                           }
                         )
                       }
-
                       initial={{
                         opacity: 0,
                         y: 15,
                       }}
-
                       animate={{
                         opacity: 1,
                         y: 0,
                       }}
-
                       transition={{
                         duration: 0.45,
                         delay: index * 0.07,
                       }}
-
                       whileHover={{
                         y: -2,
                       }}
                     >
-
 
                       {/* =================================================
                           PRODUCT
                       ================================================= */}
 
                       <ProductSection>
-
                         <ProductImageWrapper>
-
                           <ProductImage
                             src={order.image}
                             alt={order.product}
                           />
-
                         </ProductImageWrapper>
 
-
                         <ProductInfo>
-
                           <ProductName>
                             {order.product}
                           </ProductName>
@@ -452,37 +436,32 @@ const MyOrders = () => {
                           <OrderId>
                             Order ID: {order.id}
                           </OrderId>
-
                         </ProductInfo>
-
                       </ProductSection>
-
 
                       {/* =================================================
                           PRICE
                       ================================================= */}
 
                       <PriceSection>
-
                         <Price>
-                          ₹{order.price}
+                          ₹
+                          {order.price.toLocaleString(
+                            "en-IN"
+                          )}
                         </Price>
 
                         <Quantity>
                           Qty: {order.quantity}
                         </Quantity>
-
                       </PriceSection>
-
 
                       {/* =================================================
                           STATUS
                       ================================================= */}
 
                       <StatusSection>
-
                         <StatusRow>
-
                           <StatusDot
                             $status={
                               order.status
@@ -494,104 +473,92 @@ const MyOrders = () => {
                               order.status
                             }
                           >
-
                             {order.status}
 
                             {order.status ===
                               "Delivered" &&
                               ` on ${order.date}`}
-
                           </StatusText>
-
                         </StatusRow>
 
+                        {/* DELIVERED */}
 
                         {order.status ===
                           "Delivered" && (
+                          <>
+                            <StatusMessage>
+                              Your item has been
+                              delivered
+                            </StatusMessage>
 
-                          <StatusMessage>
-                            Your item has been
-                            delivered
-                          </StatusMessage>
+                            <ReviewButton
+                              whileHover={{
+                                x: 3,
+                              }}
+                              onClick={(e) => {
+                                e.stopPropagation();
 
+                                navigate(
+                                  `/orders/${order.id}/review`
+                                );
+                              }}
+                            >
+                              ★ Rate & Review Product
+                            </ReviewButton>
+                          </>
                         )}
 
+                        {/* ON THE WAY */}
 
                         {order.status ===
                           "On the way" && (
+                          <>
+                            <StatusMessage>
+                              Your item is on the way
+                            </StatusMessage>
 
-                          <StatusMessage>
-                            Your item is on the way
-                          </StatusMessage>
-
+                            <TrackButton
+                              whileHover={{
+                                x: 3,
+                              }}
+                              onClick={(e) =>
+                                e.stopPropagation()
+                              }
+                            >
+                              → Track Order
+                            </TrackButton>
+                          </>
                         )}
 
+                        {/* CANCELLED */}
 
                         {order.status ===
                           "Cancelled" && (
-
                           <StatusMessage>
                             Your order was cancelled
                           </StatusMessage>
-
                         )}
 
+                        {/* RETURNED */}
 
                         {order.status ===
-                          "Delivered" && (
-
-                         <ReviewButton
-  whileHover={{
-    x: 3,
-  }}
-  onClick={(e) => {
-    e.stopPropagation();
-
-    navigate(
-      `/orders/${order.id}/review`
-    );
-  }}
->
-  ★ Rate & Review Product
-</ReviewButton>
-
+                          "Returned" && (
+                          <StatusMessage>
+                            Your item has been returned
+                          </StatusMessage>
                         )}
-
-
-                        {order.status ===
-                          "On the way" && (
-
-                          <TrackButton
-                            whileHover={{
-                              x: 3,
-                            }}
-
-                            onClick={(e) =>
-                              e.stopPropagation()
-                            }
-                          >
-                            → Track Order
-                          </TrackButton>
-
-                        )}
-
                       </StatusSection>
 
                     </OrderCard>
-
                   )
                 )}
-
               </OrderList>
-
             )}
 
           </OrdersArea>
 
         </Content>
-
       </Main>
-
     </Page>
   );
 };
@@ -738,7 +705,6 @@ const FilterBox = styled.aside`
   }
 `;
 
-
 const FilterTitle = styled.h2`
   margin: 0;
 
@@ -754,7 +720,6 @@ const FilterTitle = styled.h2`
     rgba(18, 51, 51, 0.1);
 `;
 
-
 const FilterSection = styled.div`
   padding: 18px;
 
@@ -765,7 +730,6 @@ const FilterSection = styled.div`
     border-bottom: none;
   }
 `;
-
 
 const SectionTitle = styled.h4`
   margin: 0 0 17px;
@@ -778,7 +742,6 @@ const SectionTitle = styled.h4`
 
   letter-spacing: 0.3px;
 `;
-
 
 const CheckItem = styled.label`
   display: flex;
@@ -799,7 +762,6 @@ const CheckItem = styled.label`
     margin-bottom: 0;
   }
 `;
-
 
 const Checkbox = styled.input`
   width: 17px;
@@ -847,7 +809,6 @@ const SearchWrapper = styled.div`
   }
 `;
 
-
 const SearchInput = styled.input`
   flex: 1;
 
@@ -890,7 +851,6 @@ const SearchInput = styled.input`
     border-bottom: none;
   }
 `;
-
 
 const SearchButton = styled(motion.button)`
   height: 52px;
@@ -1015,7 +975,6 @@ const ProductSection = styled.div`
   min-width: 0;
 `;
 
-
 const ProductImageWrapper = styled.div`
   width: 90px;
 
@@ -1036,7 +995,6 @@ const ProductImageWrapper = styled.div`
   }
 `;
 
-
 const ProductImage = styled.img`
   width: 100%;
 
@@ -1047,11 +1005,9 @@ const ProductImage = styled.img`
   display: block;
 `;
 
-
 const ProductInfo = styled.div`
   min-width: 0;
 `;
-
 
 const ProductName = styled.h3`
   margin: 0 0 9px;
@@ -1065,7 +1021,6 @@ const ProductName = styled.h3`
   line-height: 1.4;
 `;
 
-
 const ProductMeta = styled.p`
   margin: 4px 0;
 
@@ -1075,7 +1030,6 @@ const ProductMeta = styled.p`
 
   font-size: 12px;
 `;
-
 
 const OrderId = styled.p`
   margin: 9px 0 0;
@@ -1096,7 +1050,6 @@ const PriceSection = styled.div`
   align-self: center;
 `;
 
-
 const Price = styled.div`
   color: #123333;
 
@@ -1104,7 +1057,6 @@ const Price = styled.div`
 
   font-weight: 700;
 `;
-
 
 const Quantity = styled.div`
   margin-top: 8px;
@@ -1125,7 +1077,6 @@ const StatusSection = styled.div`
   align-self: center;
 `;
 
-
 const StatusRow = styled.div`
   display: flex;
 
@@ -1133,7 +1084,6 @@ const StatusRow = styled.div`
 
   gap: 9px;
 `;
-
 
 const StatusDot = styled.span`
   width: 10px;
@@ -1145,7 +1095,6 @@ const StatusDot = styled.span`
   border-radius: 50%;
 
   background: ${({ $status }) => {
-
     if ($status === "Delivered") {
       return "#4fa866";
     }
@@ -1158,10 +1107,8 @@ const StatusDot = styled.span`
   }};
 `;
 
-
 const StatusText = styled.div`
   color: ${({ $status }) => {
-
     if ($status === "Delivered") {
       return "#4b9d61";
     }
@@ -1178,7 +1125,6 @@ const StatusText = styled.div`
   font-weight: 700;
 `;
 
-
 const StatusMessage = styled.p`
   margin: 9px 0 0;
 
@@ -1190,7 +1136,6 @@ const StatusMessage = styled.p`
 
   line-height: 1.45;
 `;
-
 
 const ReviewButton = styled(motion.button)`
   border: none;
@@ -1209,7 +1154,6 @@ const ReviewButton = styled(motion.button)`
 
   cursor: pointer;
 `;
-
 
 const TrackButton = styled(motion.button)`
   border: none;
@@ -1261,13 +1205,11 @@ const NoOrders = styled.div`
     rgba(18, 51, 51, 0.07);
 `;
 
-
 const NoOrdersIcon = styled.div`
   font-size: 45px;
 
   margin-bottom: 15px;
 `;
-
 
 const NoOrdersTitle = styled.h3`
   margin: 0;
@@ -1276,7 +1218,6 @@ const NoOrdersTitle = styled.h3`
 
   font-size: 20px;
 `;
-
 
 const NoOrdersText = styled.p`
   margin: 8px 0 0;

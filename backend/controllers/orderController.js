@@ -190,3 +190,89 @@ export const createOrder = async (req, res) => {
     client.release();
   }
 };
+
+
+/* =========================================================
+   GET MY ORDERS
+========================================================= */
+
+export const getMyOrders = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pool.query(
+      `
+      SELECT
+        o.id,
+        o.user_id,
+        o.total_amount,
+        o.delivery_charge,
+        o.payment_method,
+        o.status,
+        o.created_at,
+        o.updated_at,
+
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'id', oi.id,
+              'productId', oi.product_id,
+              'productName', oi.product_name,
+              'productImage', oi.product_image,
+              'price', oi.price,
+              'quantity', oi.quantity,
+              'selectedSize', oi.selected_size
+            )
+            ORDER BY oi.id
+          ) FILTER (WHERE oi.id IS NOT NULL),
+          '[]'
+        ) AS items
+
+      FROM orders o
+
+      LEFT JOIN order_items oi
+        ON o.id = oi.order_id
+
+      WHERE o.user_id = $1
+
+      GROUP BY
+        o.id,
+        o.user_id,
+        o.total_amount,
+        o.delivery_charge,
+        o.payment_method,
+        o.status,
+        o.created_at,
+        o.updated_at
+
+      ORDER BY o.created_at DESC
+      `,
+      [userId]
+    );
+
+    const orders = result.rows.map((order) => ({
+      id: order.id,
+      orderId: `SS${order.id}`,
+      totalAmount: Number(order.total_amount),
+      deliveryCharge: Number(order.delivery_charge),
+      paymentMethod: order.payment_method,
+      status: order.status,
+      createdAt: order.created_at,
+      updatedAt: order.updated_at,
+      items: order.items,
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: orders.length,
+      orders,
+    });
+  } catch (error) {
+    console.error("Get my orders error:", error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch orders",
+    });
+  }
+};
