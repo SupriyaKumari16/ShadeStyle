@@ -42,7 +42,6 @@ import WriteReview from "./profile/WriteReview";
 import GlobalStyles from "./styles/GlobalStyles";
 import { dark } from "./styles/Themes";
 
-
 /* =====================================================
    MAIN WEBSITE
 ===================================================== */
@@ -107,7 +106,6 @@ function MainWebsite() {
   );
 }
 
-
 /* =====================================================
    APP
 ===================================================== */
@@ -129,7 +127,6 @@ function App() {
             element={<MainWebsite />}
           />
 
-
           {/* =================================================
               AUTH
           ================================================= */}
@@ -144,16 +141,14 @@ function App() {
             }
           />
 
-
           {/* =================================================
               YOUR BEST COLORS
           ================================================= */}
 
           <Route
-            path="/your-best-colors"
+            path="/best-colors/:tone"
             element={<YourBestColors />}
           />
-
 
           {/* =================================================
               COLLECTIONS
@@ -174,7 +169,6 @@ function App() {
             element={<JewelleryCollection />}
           />
 
-
           {/* =================================================
               PRODUCT
           ================================================= */}
@@ -183,7 +177,6 @@ function App() {
             path="/product/:id"
             element={<ProductDetail />}
           />
-
 
           {/* =================================================
               SHOPPING
@@ -214,7 +207,6 @@ function App() {
             element={<OrderSuccess />}
           />
 
-
           {/* =================================================
               ACCOUNT
           ================================================= */}
@@ -234,31 +226,29 @@ function App() {
             element={<AddressPage />}
           />
 
-
           {/* =================================================
               MY ORDERS
           ================================================= */}
 
           <Route
-  path="/orders"
-  element={<MyOrders />}
-/>
+            path="/orders"
+            element={<MyOrders />}
+          />
 
-<Route
-  path="/orders/:id"
-  element={<MyOrderDetails />}
-/>
+          <Route
+            path="/orders/:id"
+            element={<MyOrderDetails />}
+          />
 
-<Route
-  path="/orders/:id/updates"
-  element={<OrderUpdates />}
-/>
+          <Route
+            path="/orders/:id/updates"
+            element={<OrderUpdates />}
+          />
 
-<Route
-  path="/orders/:id/review"
-  element={<WriteReview />}
-/>
-
+          <Route
+            path="/orders/:id/review"
+            element={<WriteReview />}
+          />
 
           {/* =================================================
               FALLBACK

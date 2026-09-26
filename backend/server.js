@@ -8,6 +8,7 @@ import authRoutes from "./routes/authRoutes.js";
 import testRoutes from "./routes/testRoutes.js";
 import addressRoutes from "./routes/addressRoutes.js";
 import accountRoutes from "./routes/accountRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
 
 dotenv.config();
 
@@ -66,6 +67,7 @@ app.use(
 
 app.use("/api/addresses", addressRoutes);
 app.use("/api/account", accountRoutes);
+app.use("/api/orders", orderRoutes);
 
 /* =========================
    START SERVER

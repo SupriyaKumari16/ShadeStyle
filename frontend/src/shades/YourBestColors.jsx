@@ -2,7 +2,6 @@ import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import styled from "styled-components";
 
-
 /* =========================================================
    SKIN TONE DATA
 ========================================================= */
@@ -129,7 +128,6 @@ const skinToneData = {
   },
 };
 
-
 /* =========================================================
    SECTION
 ========================================================= */
@@ -151,7 +149,6 @@ const Section = styled.section`
 
   position: relative;
 `;
-
 
 /* =========================================================
    HEADER
@@ -200,7 +197,6 @@ const Header = styled.div`
   }
 `;
 
-
 /* =========================================================
    SKIN INFO
 ========================================================= */
@@ -234,7 +230,6 @@ const SkinInfo = styled.div`
   }
 `;
 
-
 /* =========================================================
    COLORS TITLE
 ========================================================= */
@@ -255,7 +250,6 @@ const ColorsTitle = styled.h2`
   }
 `;
 
-
 /* =========================================================
    COLORS
 ========================================================= */
@@ -273,7 +267,6 @@ const Colors = styled.div`
 
   margin-bottom: 6rem;
 `;
-
 
 /* =========================================================
    COLOR
@@ -335,7 +328,6 @@ const Color = styled.div`
   }
 `;
 
-
 /* =========================================================
    COLLECTION TITLE
 ========================================================= */
@@ -387,7 +379,6 @@ const CollectionsTitle = styled.div`
   }
 `;
 
-
 /* =========================================================
    COLLECTIONS
 ========================================================= */
@@ -409,7 +400,6 @@ const Collections = styled.div`
     grid-template-columns: 1fr;
   }
 `;
-
 
 /* =========================================================
    COLLECTION CARD
@@ -494,94 +484,70 @@ const CollectionCard = styled.div`
   }
 `;
 
-
 /* =========================================================
    COMPONENT
 ========================================================= */
 
 const YourBestColors = () => {
-
   const { tone } = useParams();
 
   const navigate = useNavigate();
-
 
   /* =======================================================
      TONE MAP
   ======================================================= */
 
   const toneMap = {
-
     fair: "Fair",
-
     light: "Light",
-
     medium: "Medium",
-
     olive: "Olive",
-
     tan: "Tan",
-
     dusky: "Dusky",
-
     deep: "Deep",
-
     "deep-dark": "RichDeep",
-
   };
-
 
   const selectedTone =
     toneMap[tone] || "Fair";
 
-
   const currentTone =
     skinToneData[selectedTone] ||
     skinToneData.Fair;
-
 
   /* =======================================================
      TRENDY
   ======================================================= */
 
   const handleTrendyClick = () => {
-
     navigate(
-      `/collection/trendy?skinTone=${encodeURIComponent(
+      `/collections/trendy?skinTone=${encodeURIComponent(
         selectedTone
       )}`
     );
-
   };
-
 
   /* =======================================================
      TRADITIONAL
   ======================================================= */
 
   const handleTraditionalClick = () => {
-
     navigate(
-      `/collection/traditional?skinTone=${encodeURIComponent(
+      `/collections/traditional?skinTone=${encodeURIComponent(
         selectedTone
       )}`
     );
-
   };
-
 
   /* =======================================================
      JEWELLERY
   ======================================================= */
 
   const handleJewelleryClick = () => {
-
     navigate(
-      "/collection/jewellery"
+      "/collections/jewellery"
     );
-
   };
-
 
   /* =======================================================
      RENDER
@@ -606,11 +572,9 @@ const YourBestColors = () => {
 
         </SkinInfo>
 
-
         <h1>
           Your Best Colors
         </h1>
-
 
         <p>
           Discover the shades that complement
@@ -618,7 +582,6 @@ const YourBestColors = () => {
         </p>
 
       </Header>
-
 
       {/* =================================================
           COLOR PALETTE
@@ -628,7 +591,6 @@ const YourBestColors = () => {
       <ColorsTitle>
         Recommended Shades
       </ColorsTitle>
-
 
       <Colors>
 
@@ -653,7 +615,6 @@ const YourBestColors = () => {
 
       </Colors>
 
-
       {/* =================================================
           COLLECTION TITLE
       ================================================= */}
@@ -664,12 +625,11 @@ const YourBestColors = () => {
           Shop By Category
         </h2>
 
-
         <button
           type="button"
           onClick={() =>
             navigate(
-              `/collection/trendy?skinTone=${encodeURIComponent(
+              `/collections/trendy?skinTone=${encodeURIComponent(
                 selectedTone
               )}`
             )
@@ -680,29 +640,24 @@ const YourBestColors = () => {
 
       </CollectionsTitle>
 
-
       {/* =================================================
           COLLECTIONS
       ================================================= */}
 
       <Collections>
 
-
         {/* =================================================
             TRENDY
         ================================================= */}
 
         <CollectionCard
-          onClick={
-            handleTrendyClick
-          }
+          onClick={handleTrendyClick}
         >
 
           <img
             src="/images/trendy-collection.jpg"
             alt="Trendy Collection"
           />
-
 
           <div className="overlay">
 
@@ -718,22 +673,18 @@ const YourBestColors = () => {
 
         </CollectionCard>
 
-
         {/* =================================================
             TRADITIONAL
         ================================================= */}
 
         <CollectionCard
-          onClick={
-            handleTraditionalClick
-          }
+          onClick={handleTraditionalClick}
         >
 
           <img
             src="/images/traditional-collection.jpg"
             alt="Traditional Collection"
           />
-
 
           <div className="overlay">
 
@@ -749,22 +700,18 @@ const YourBestColors = () => {
 
         </CollectionCard>
 
-
         {/* =================================================
             JEWELLERY
         ================================================= */}
 
         <CollectionCard
-          onClick={
-            handleJewelleryClick
-          }
+          onClick={handleJewelleryClick}
         >
 
           <img
             src="/images/jewelry-collection.jpg"
             alt="Jewellery Collection"
           />
-
 
           <div className="overlay">
 
@@ -780,12 +727,10 @@ const YourBestColors = () => {
 
         </CollectionCard>
 
-
       </Collections>
 
     </Section>
   );
 };
-
 
 export default YourBestColors;

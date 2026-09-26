@@ -13,8 +13,13 @@ const OrderSuccess = () => {
       <Page>
         <Card>
           <Icon>🛍️</Icon>
+
           <Title>No Order Found</Title>
-          <Text>There is no recent order available.</Text>
+
+          <Text>
+            There is no recent order available.
+          </Text>
+
           <Button onClick={() => navigate("/")}>
             CONTINUE SHOPPING
           </Button>
@@ -28,23 +33,30 @@ const OrderSuccess = () => {
       <Card>
         <Icon>✓</Icon>
 
-        <Title>Order Placed Successfully!</Title>
+        <Title>
+          Order Placed Successfully!
+        </Title>
 
         <Text>
-          Thank you for shopping with ShadeStyle. Your demo order has been
-          placed successfully.
+          Thank you for shopping with ShadeStyle.
+          Your order has been placed successfully.
         </Text>
 
-        <OrderInfo>Order ID: {order.orderId}</OrderInfo>
+        <OrderInfo>
+          Order ID: {order.orderId}
+        </OrderInfo>
 
         <Text>
           Payment Method:{" "}
-          {order.paymentMethod === "COD"
+          {order.paymentMethod === "cod"
             ? "Cash on Delivery"
             : order.paymentMethod}
         </Text>
 
-        <Text>Total Amount: ₹{order.amount.toLocaleString("en-IN")}</Text>
+        <Text>
+          Total Amount: ₹
+          {Number(order.totalAmount).toLocaleString("en-IN")}
+        </Text>
 
         <Button onClick={() => navigate("/")}>
           CONTINUE SHOPPING

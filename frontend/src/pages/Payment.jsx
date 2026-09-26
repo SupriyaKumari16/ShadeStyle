@@ -82,6 +82,11 @@ const PayButton = styled.button`
   &:hover {
     background: #1c5a56;
   }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 `;
 
 const Row = styled.div`
@@ -105,23 +110,37 @@ const Payment = () => {
   const deliveryCharge = cartTotal >= 999 ? 0 : 49;
   const finalTotal = cartTotal + deliveryCharge;
 
-  const handlePayment = (event) => {
+  const handlePayment = async (event) => {
     event.preventDefault();
 
+    const token = localStorage.getItem("token");
+
+    // Check login
+    if (!token) {
+      alert("Please login to place an order");
+      return;
+    }
+
+    // Check cart
     if (!cart.length) {
       alert("Your cart is empty");
       navigate("/cart");
       return;
     }
 
+    // UPI validation
     if (paymentMethod === "upi" && !upiId.trim()) {
       alert("Please enter your UPI ID");
       return;
     }
 
+    // Card validation
     if (
       paymentMethod === "card" &&
-      (!cardNumber || !cardName || !expiry || !cvv)
+      (!cardNumber.trim() ||
+        !cardName.trim() ||
+        !expiry.trim() ||
+        !cvv.trim())
     ) {
       alert("Please fill all card details");
       return;
@@ -129,20 +148,53 @@ const Payment = () => {
 
     setIsProcessing(true);
 
-    setTimeout(() => {
-      const order = {
-        orderId: `SS${Date.now()}`,
-        amount: finalTotal,
-        paymentMethod,
-        items: cart,
-        createdAt: new Date().toISOString(),
-      };
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/orders",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            paymentMethod,
+            items: cart,
+          }),
+        }
+      );
 
-      localStorage.setItem("shadestyle_order", JSON.stringify(order));
+      const data = await response.json();
 
+      if (!response.ok || !data.success) {
+        throw new Error(
+          data.message || "Failed to place order"
+        );
+      }
+
+      console.log("Order created successfully:", data);
+
+      // Save latest order temporarily for OrderSuccess page
+      localStorage.setItem(
+        "shadestyle_order",
+        JSON.stringify(data.order)
+      );
+
+      // Clear cart after successful order
       clearCart();
+
+      // Go to success page
       navigate("/order-success");
-    }, 1800);
+    } catch (error) {
+      console.error("Order creation error:", error);
+
+      alert(
+        error.message ||
+          "Unable to place order. Please try again."
+      );
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -190,7 +242,9 @@ const Payment = () => {
               type="text"
               placeholder="Enter UPI ID"
               value={upiId}
-              onChange={(event) => setUpiId(event.target.value)}
+              onChange={(event) =>
+                setUpiId(event.target.value)
+              }
             />
           )}
 
@@ -201,21 +255,27 @@ const Payment = () => {
                 placeholder="Card Number"
                 maxLength="16"
                 value={cardNumber}
-                onChange={(event) => setCardNumber(event.target.value)}
+                onChange={(event) =>
+                  setCardNumber(event.target.value)
+                }
               />
 
               <Input
                 type="text"
                 placeholder="Name on Card"
                 value={cardName}
-                onChange={(event) => setCardName(event.target.value)}
+                onChange={(event) =>
+                  setCardName(event.target.value)
+                }
               />
 
               <Input
                 type="text"
                 placeholder="Expiry Date (MM/YY)"
                 value={expiry}
-                onChange={(event) => setExpiry(event.target.value)}
+                onChange={(event) =>
+                  setExpiry(event.target.value)
+                }
               />
 
               <Input
@@ -223,20 +283,31 @@ const Payment = () => {
                 placeholder="CVV"
                 maxLength="3"
                 value={cvv}
-                onChange={(event) => setCvv(event.target.value)}
+                onChange={(event) =>
+                  setCvv(event.target.value)
+                }
               />
             </>
           )}
 
           {paymentMethod === "netbanking" && (
-            <p>Selecting a bank will be available in the live gateway.</p>
+            <p>
+              Selecting a bank will be available in the
+              live gateway.
+            </p>
           )}
 
           {paymentMethod === "cod" && (
-            <p>Pay in cash when your order is delivered.</p>
+            <p>
+              Pay in cash when your order is delivered.
+            </p>
           )}
 
-          <PayButton type="submit" onClick={handlePayment}>
+          <PayButton
+            type="button"
+            onClick={handlePayment}
+            disabled={isProcessing}
+          >
             {isProcessing
               ? "PROCESSING PAYMENT..."
               : `PAY ₹${finalTotal.toFixed(2)}`}
@@ -247,10 +318,13 @@ const Payment = () => {
           <Title>Order Details</Title>
 
           {cart.map((item) => (
-            <Row key={`${item._id || item.id}-${item.selectedSize}`}>
+            <Row
+              key={`${item._id || item.id}-${item.selectedSize}`}
+            >
               <span>
                 {item.name} × {item.quantity}
               </span>
+
               <span>
                 ₹{(item.price * item.quantity).toFixed(2)}
               </span>
@@ -266,6 +340,7 @@ const Payment = () => {
 
           <Row>
             <span>Delivery</span>
+
             <span>
               {deliveryCharge === 0
                 ? "FREE"
@@ -275,7 +350,10 @@ const Payment = () => {
 
           <Row>
             <strong>Total Amount</strong>
-            <strong>₹{finalTotal.toFixed(2)}</strong>
+
+            <strong>
+              ₹{finalTotal.toFixed(2)}
+            </strong>
           </Row>
         </Card>
       </Layout>
