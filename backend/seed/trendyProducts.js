@@ -1,8 +1,5 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
-
-import Product from "../models/Product.js";
-import connectDB from "../config/db.js";
+import { pool } from "../config/db.js";
 
 import { trendyProducts } from "../../frontend/src/data/trendy/data.js";
 
@@ -10,12 +7,11 @@ dotenv.config();
 
 const seedTrendyProducts = async () => {
   try {
-    await connectDB();
-
     // Existing trendy products remove
-    await Product.deleteMany({
-      collectionType: "trendy",
-    });
+    await pool.query(`
+      DELETE FROM products
+      WHERE collection_type = 'trendy'
+    `);
 
     // Add collectionType to frontend data
     const products = trendyProducts.map(
@@ -25,13 +21,42 @@ const seedTrendyProducts = async () => {
       })
     );
 
-    await Product.insertMany(products);
+    // Insert products into PostgreSQL
+    for (const product of products) {
+      await pool.query(
+        `
+        INSERT INTO products (
+          name,
+          price,
+          rating,
+          category,
+          collection_type,
+          color,
+          sizes,
+          skin_tones,
+          image
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `,
+        [
+          product.name,
+          product.price,
+          product.rating,
+          product.category,
+          product.collectionType,
+          product.color,
+          product.sizes,
+          product.skinTones,
+          product.image,
+        ]
+      );
+    }
 
     console.log(
       `${products.length} trendy products inserted successfully ✅`
     );
 
-    await mongoose.connection.close();
+    await pool.end();
 
     process.exit(0);
   } catch (error) {
@@ -40,7 +65,7 @@ const seedTrendyProducts = async () => {
       error
     );
 
-    await mongoose.connection.close();
+    await pool.end();
 
     process.exit(1);
   }

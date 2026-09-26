@@ -1,8 +1,5 @@
 import dotenv from "dotenv";
-import mongoose from "mongoose";
-
-import Product from "../models/Product.js";
-import connectDB from "../config/db.js";
+import { pool } from "../config/db.js";
 
 import {
   traditionalProducts,
@@ -12,12 +9,11 @@ dotenv.config();
 
 const seedTraditionalProducts = async () => {
   try {
-    await connectDB();
-
     // Existing traditional products remove
-    await Product.deleteMany({
-      collectionType: "traditional",
-    });
+    await pool.query(`
+      DELETE FROM products
+      WHERE collection_type = 'traditional'
+    `);
 
     // Add collectionType
     const products = traditionalProducts.map(
@@ -27,24 +23,51 @@ const seedTraditionalProducts = async () => {
       })
     );
 
-    await Product.insertMany(products);
+    // Insert products into PostgreSQL
+    for (const product of products) {
+      await pool.query(
+        `
+        INSERT INTO products (
+          name,
+          price,
+          rating,
+          category,
+          collection_type,
+          color,
+          sizes,
+          skin_tones,
+          image
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `,
+        [
+          product.name,
+          product.price,
+          product.rating,
+          product.category,
+          product.collectionType,
+          product.color,
+          product.sizes,
+          product.skinTones,
+          product.image,
+        ]
+      );
+    }
 
     console.log(
       `${products.length} traditional products inserted successfully ✅`
     );
 
-    await mongoose.connection.close();
+    await pool.end();
 
     process.exit(0);
-
   } catch (error) {
-
     console.error(
       "Traditional products seeding failed:",
       error
     );
 
-    await mongoose.connection.close();
+    await pool.end();
 
     process.exit(1);
   }

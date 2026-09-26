@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
-import connectDB from "../config/db.js";
-import Product from "../models/Product.js";
+import { pool } from "../config/db.js";
 
 dotenv.config();
 
@@ -154,26 +153,54 @@ const jewelleryProducts = [
   },
 ];
 
-
 /* =====================================================
    SEED FUNCTION
 ===================================================== */
 
 const seedJewellery = async () => {
   try {
-    await connectDB();
-
     // Remove existing jewellery products
-    await Product.deleteMany({
-      collectionType: "jewellery",
-    });
+    await pool.query(`
+      DELETE FROM products
+      WHERE collection_type = 'jewellery'
+    `);
 
-    // Insert fresh jewellery products
-    await Product.insertMany(jewelleryProducts);
+    // Insert jewellery products
+    for (const product of jewelleryProducts) {
+      await pool.query(
+        `
+        INSERT INTO products (
+          name,
+          price,
+          rating,
+          category,
+          collection_type,
+          color,
+          sizes,
+          skin_tones,
+          image
+        )
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        `,
+        [
+          product.name,
+          product.price,
+          product.rating,
+          product.category,
+          product.collectionType,
+          product.color,
+          product.sizes,
+          product.skinTones,
+          product.image,
+        ]
+      );
+    }
 
     console.log(
       `${jewelleryProducts.length} jewellery products inserted successfully ✅`
     );
+
+    await pool.end();
 
     process.exit(0);
   } catch (error) {
@@ -181,6 +208,8 @@ const seedJewellery = async () => {
       "Jewellery seed failed:",
       error
     );
+
+    await pool.end();
 
     process.exit(1);
   }

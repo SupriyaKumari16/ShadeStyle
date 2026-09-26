@@ -1,10 +1,6 @@
-import Product from "../models/Product.js";
+import { pool } from "../config/db.js";
 
-
-/* =====================================================
-   GET ALL PRODUCTS
-===================================================== */
-
+// GET ALL PRODUCTS + FILTERS
 export const getProducts = async (req, res) => {
   try {
     const {
@@ -15,92 +11,94 @@ export const getProducts = async (req, res) => {
       size,
     } = req.query;
 
-    const filter = {};
+    let query = `
+      SELECT
+        id,
+        id AS "_id",
+        name,
+        price,
+        rating,
+        category,
+        collection_type AS "collectionType",
+        color,
+        sizes,
+        skin_tones AS "skinTones",
+        image,
+        created_at AS "createdAt",
+        updated_at AS "updatedAt"
+      FROM products
+      WHERE 1=1
+    `;
 
+    const values = [];
+    let paramIndex = 1;
 
-    /* =========================
-       COLLECTION FILTER
-    ========================= */
-
+    // Collection filter
     if (collection) {
-      filter.collectionType =
-        collection.toLowerCase();
+      query += ` AND LOWER(collection_type) = LOWER($${paramIndex})`;
+      values.push(collection);
+      paramIndex++;
     }
 
-
-    /* =========================
-       SKIN TONE FILTER
-    ========================= */
-
+    // Skin tone filter
+    // Jewellery ke liye skin tone filter apply nahi hoga
     if (
       skinTone &&
       collection?.toLowerCase() !== "jewellery"
     ) {
-      filter.skinTones = {
-        $in: [
-          new RegExp(
-            `^${skinTone}$`,
-            "i"
-          ),
-        ],
-      };
+      query += `
+        AND EXISTS (
+          SELECT 1
+          FROM unnest(skin_tones) AS tone
+          WHERE LOWER(tone) = LOWER($${paramIndex})
+        )
+      `;
+
+      values.push(skinTone);
+      paramIndex++;
     }
 
-
-    /* =========================
-       CATEGORY FILTER
-    ========================= */
-
+    // Category filter
     if (category) {
-      filter.category = category;
+      query += ` AND LOWER(category) = LOWER($${paramIndex})`;
+      values.push(category);
+      paramIndex++;
     }
 
-
-    /* =========================
-       COLOR FILTER
-    ========================= */
-
+    // Color filter
     if (color) {
-      filter.color = color;
+      query += ` AND LOWER(color) = LOWER($${paramIndex})`;
+      values.push(color);
+      paramIndex++;
     }
 
-
-    /* =========================
-       SIZE FILTER
-    ========================= */
-
+    // Size filter
     if (size) {
-      filter.sizes = size;
+      query += `
+        AND EXISTS (
+          SELECT 1
+          FROM unnest(sizes) AS product_size
+          WHERE LOWER(product_size) = LOWER($${paramIndex})
+        )
+      `;
+
+      values.push(size);
+      paramIndex++;
     }
 
+    // Same behavior as MongoDB:
+    // newest products first
+    query += ` ORDER BY created_at DESC`;
 
-    /* =========================
-       FETCH PRODUCTS
-    ========================= */
-
-    const products = await Product.find(
-      filter
-    ).sort({
-      createdAt: -1,
-    });
-
-
-    /* =========================
-       RESPONSE
-    ========================= */
+    const result = await pool.query(query, values);
 
     res.status(200).json({
       success: true,
-      count: products.length,
-      products,
+      count: result.rows.length,
+      products: result.rows,
     });
-
   } catch (error) {
-
-    console.error(
-      "Get products error:",
-      error
-    );
+    console.error("Get products error:", error);
 
     res.status(500).json({
       success: false,
@@ -110,59 +108,50 @@ export const getProducts = async (req, res) => {
 };
 
 
-/* =====================================================
-   GET SINGLE PRODUCT BY ID
-===================================================== */
-
+// GET SINGLE PRODUCT BY ID
 export const getProductById = async (req, res) => {
   try {
-
     const { id } = req.params;
 
+    const result = await pool.query(
+      `
+      SELECT
+        id,
+        id AS "_id",
+        name,
+        price,
+        rating,
+        category,
+        collection_type AS "collectionType",
+        color,
+        sizes,
+        skin_tones AS "skinTones",
+        image,
+        created_at AS "createdAt",
+        updated_at AS "updatedAt"
+      FROM products
+      WHERE id = $1
+      `,
+      [id]
+    );
 
-    /* =========================
-       FIND PRODUCT
-    ========================= */
-
-    const product =
-      await Product.findById(id);
-
-
-    /* =========================
-       PRODUCT NOT FOUND
-    ========================= */
-
-    if (!product) {
-
+    if (result.rows.length === 0) {
       return res.status(404).json({
         success: false,
         message: "Product not found",
       });
-
     }
-
-
-    /* =========================
-       RESPONSE
-    ========================= */
 
     res.status(200).json({
       success: true,
-      product,
+      product: result.rows[0],
     });
-
   } catch (error) {
-
-    console.error(
-      "Get product by ID error:",
-      error
-    );
-
+    console.error("Get product by ID error:", error);
 
     res.status(500).json({
       success: false,
       message: "Failed to fetch product",
     });
-
   }
 };
